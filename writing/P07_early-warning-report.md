@@ -111,7 +111,7 @@ The ASRS-derived signal **led the widely-recognised crisis by roughly 12–18 mo
 
 ---
 
-## 5. Robustness — ruling out the artifacts a reviewer will probe
+## 5. Robustness — ruling out the artifacts a skeptic will probe
 
 ### 5.1 Is the rising *share* just a denominator / compositional artifact?
 

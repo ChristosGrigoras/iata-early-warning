@@ -219,7 +219,7 @@ Strongest early signal = a **narrative theme rising in share that maps onto a ri
 - **Share over raw count** — chosen to neutralize reporting-volume bias (the central caveat); raw counts kept only as context.
 - **Robust z (median/MAD) over mean/std** — baseline must not be inflated by the very spikes we hunt.
 - **Persistence ≥ 3 months** — favors *sustained emergence* over noise; aligns with "early-warning," not "alarm."
-- **Three bias guards (taxonomy-change, YoY seasonality, ranked-candidates framing)** — rule out the artifacts a reviewer will probe; "candidates not alarms" is honest and on-theme for responsible AI. [OP48]
+- **Three bias guards (taxonomy-change, YoY seasonality, ranked-candidates framing)** — rule out the artifacts a skeptic will probe; "candidates not alarms" is honest and on-theme for responsible AI. [OP48]
 - **Retrospective headline + caveated watchlist** — proves the method on a falsifiable past signal, then shows it runs live. [OP48]
 - **Signal B = zero-shot-LLM-led core + unsupervised discovery guard** — interpretable, with the unsupervised pass defending against "only finds what you name." Lighter than full BERTopic tuning. [OP48]
 - **Pilot → scale pivot (Signal B labeller)** — spec'd on local GLiNER2 (free, CPU) for the method demo; at full coverage the ~66 h CPU runtime made it impractical, so the labeller was run via **OpenRouter DeepSeek V4 Flash** for all 79,572 narratives. Cheap hosted inference, not local CPU, was the right tool once full coverage mattered; the detector logic is unchanged either way. [OP48]
