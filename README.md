@@ -37,7 +37,6 @@ Track each risk category's **share** of the month's reports (not raw counts, to 
 ## Repository map
 
 ```
-case-study.md                    The brief (task as given)
 README.md                        This file
 requirements.txt                 Python dependencies
 
@@ -62,7 +61,7 @@ provenance-ledger.md             Full change log (author · timestamp · change)
 data/                            NOT committed — fetch per "Reproduction" below
 ```
 
-**Filename convention.** Every generated artifact is prefixed `P0N_` with the roadmap phase that produced it (`P00` framing · `P01` data · `P02` EDA · `P03` method · `P04` signals · `P05` corroboration · `P07` report/deck), so any file traces back to a step in the analysis. Fixed inputs (`case-study.md`), root meta files (this README, `provenance-ledger.md`), and gitignored `data/` are exempt.
+**Filename convention.** Every generated artifact is prefixed `P0N_` with the roadmap phase that produced it (`P00` framing · `P01` data · `P02` EDA · `P03` method · `P04` signals · `P05` corroboration · `P07` report/deck), so any file traces back to a step in the analysis. Root meta files (this README, `provenance-ledger.md`) and gitignored `data/` are exempt.
 
 Working/process files (`plans/`, `provenance-ledger.md`) are kept deliberately — see **Authorship & provenance** below.
 
