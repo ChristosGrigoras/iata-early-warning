@@ -81,10 +81,10 @@ Validated end-to-end on Jan 2025 (**926 reports → 2.45 MB CSV**, saved `data/r
 ## Acquired dataset (2026-06-18) [OP48]
 
 - **15 yearly CSV chunks** (Jan Y → Jan Y+1, 1-month overlap) in `data/raw/asrs_2011.csv … asrs_2025.csv` (~224 MB). Export counts: 2011=6109, 2012=5397, 2013=4741, 2014=5031, 2015=6472, 2016=5921, 2017=5660, 2018=6213, 2019=6830, 2020=5459, 2021=5005, 2022=5845, 2023=4996, 2024=5867, 2025=6585.
-- **Combined → `data/processed/asrs.parquet`**: built by `production/build/build_dataset.py` (pandas 2-row-header parse → flatten → dedupe ACN → Parquet). **80,047 unique reports, 127 columns.**
+- **Combined → `data/processed/asrs.parquet`**: built by `production/build/P01_build_dataset.py` (pandas 2-row-header parse → flatten → dedupe ACN → Parquet). **80,047 unique reports, 127 columns.**
 - **Coverage:** incident `Date` (YYYYMM) spans 2011–2025 (+ Jan-2026 overlap edge, 469; one stray 2002-dated late report). `Synopsis` 100% populated; **`Report 1 | Narrative` 100%**, `Report 2 | Narrative` 22.8%.
 - **Column naming:** duplicate field names across groups are prefixed, e.g. `Report 1 | Narrative`, `Report 2 | Narrative`, `Aircraft 1`/`Aircraft 2` fields. `ACN`, `Date`, `Synopsis` are unprefixed (globally unique). Added `src_year` (source chunk).
-- **Rebuild:** `. .venv/bin/activate && python production/build/build_dataset.py`.
+- **Rebuild:** `. .venv/bin/activate && python production/build/P01_build_dataset.py`.
 
 ## TODO (data acquisition) — DONE
 

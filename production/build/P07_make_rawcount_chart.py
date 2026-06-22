@@ -5,7 +5,7 @@ moved"). Plots the ground-conflict RAW monthly count (numerator) against the
 total monthly reports (denominator) on twin axes: the numerator roughly tripled
 while the denominator stayed flat, so the rising share reflects a real rise in
 ground-conflict reports, not a composition artifact. IATA-aligned palette,
-consistent with make_hero_chart.py."""
+consistent with P07_make_hero_chart.py."""
 
 from pathlib import Path
 
@@ -20,7 +20,7 @@ ASSETS_DIR = ROOT / "writing/assets"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 ASSETS_DIR.mkdir(parents=True, exist_ok=True)
 
-# --- IATA-aligned palette (matches make_hero_chart.py) --------------------
+# --- IATA-aligned palette (matches P07_make_hero_chart.py) --------------------
 NAVY = "#0E4F9E"       # numerator — ground-conflict count
 STEEL = "#5B9BD5"
 SLATE = "#2E3440"      # text
@@ -94,10 +94,10 @@ def main() -> None:
               bbox_to_anchor=(0.0, 0.98))
 
     fig.tight_layout()
-    out = OUT_DIR / "rawcount_ground_conflict.png"
+    out = OUT_DIR / "P07_rawcount_ground_conflict.png"
     fig.savefig(out, bbox_inches="tight", facecolor="white")
     # mirror into the deck asset folder so the slide can embed it
-    asset = ASSETS_DIR / "rawcount_ground_conflict.png"
+    asset = ASSETS_DIR / "P07_rawcount_ground_conflict.png"
     fig.savefig(asset, bbox_inches="tight", facecolor="white")
     print(f"wrote {out}")
     print(f"wrote {asset}")

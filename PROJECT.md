@@ -20,7 +20,7 @@ Structured Cursor workspace for the IATA Senior Data Scientist case study: explo
 | `research/` | ASRS data dictionary, sources, EDA findings, signal/safety literature (`notes/`). |
 | `production/` | Delivery: `brief/`, `spec/` (methodology), `build/` (notebooks, modules, prototype), `output/` (figures, deck). |
 | `writing/` | Narrative: `drafts/` → `published/` (report, speaker notes). |
-| `data/` | **gitignored.** `raw/` (yearly ASRS CSV exports), `processed/asrs.parquet` (combined, 80k reports). Rebuild via `production/build/build_dataset.py`. |
+| `data/` | **gitignored.** `raw/` (yearly ASRS CSV exports), `processed/asrs.parquet` (combined, 80k reports). Rebuild via `production/build/P01_build_dataset.py`. |
 | `.cursor/rules/` | Layered agent rules (`00-` … `99-`). |
 
 ## Key files

@@ -3,19 +3,19 @@ authors: [OP48]
 primary: OP48
 ---
 
-# Task brief — build `02-structured-signals.ipynb` (Signal A)
+# Task brief — build `P04_02-structured-signals.ipynb` (Signal A)
 
-**For:** CDX53 (implementation). **Spec of record:** `production/spec/methodology.md` §3–§5 + §9 parameter table. This brief is the build checklist; the spec wins on any conflict. [OP48]
+**For:** CDX53 (implementation). **Spec of record:** `production/spec/P03_methodology.md` §3–§5 + §9 parameter table. This brief is the build checklist; the spec wins on any conflict. [OP48]
 
 ## Inputs / outputs
 
 - **Input:** `data/processed/asrs.parquet` (80,047 reports, 127 cols; `Date` = YYYYMM string).
-- **Notebook:** `production/build/02-structured-signals.ipynb` (Polars-first, matplotlib).
+- **Notebook:** `production/build/P04_02-structured-signals.ipynb` (Polars-first, matplotlib).
 - **Artifacts → `production/output/signals/`:**
   - `signal_candidates.csv` — ranked table (schema below)
   - `category_share_series.parquet` — tidy long series for reuse by `04`
   - one trend PNG per top-ranked candidate (share + baseline band + fire markers)
-  - `signalA_summary.md` — 5–8 bullet plain-English readout
+  - `P04_signalA_summary.md` — 5–8 bullet plain-English readout
 - **Provenance:** first cell `# provenance: primary=OP48 authors=[OP48, CDX53]` (CDX53 wrote the code, OP48 specified it).
 
 ## Robust ROOT pattern (reuse from 01-eda)
@@ -42,7 +42,7 @@ if not (ROOT / "data" / "processed" / "asrs.parquet").exists():
 8. **Rank.** `rank` by `peak_z × months_sustained` (desc). Build `signal_candidates.csv` with:
    `field, category, latest_share, z_latest, yoy_share_delta, taxonomy_suspect, first_fire_ym, months_sustained, peak_z, rank`.
 9. **Plots.** For the top ~6 non-taxonomy-suspect rising candidates: share line + 24-mo median band + fire-month markers; clean year x-axis (reuse the `mdates.YearLocator` fix from 01-eda); greyed trailing 2 months.
-10. **Readout.** `signalA_summary.md`: top candidates, which fired, which are taxonomy-suspect, any seasonal rejections — framed as **candidates for human review, not alarms**.
+10. **Readout.** `P04_signalA_summary.md`: top candidates, which fired, which are taxonomy-suspect, any seasonal rejections — framed as **candidates for human review, not alarms**.
 
 ## Acceptance checks
 

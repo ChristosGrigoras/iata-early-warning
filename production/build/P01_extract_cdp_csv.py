@@ -4,7 +4,7 @@
 The DBOL export is fetched in-browser via fetch().text(); large CDP responses are
 spilled to a JSON log file. This pulls the string value out and writes it as a CSV.
 
-Usage: python extract_cdp_csv.py <cdp_log.json> <out.csv>
+Usage: python P01_extract_cdp_csv.py <cdp_log.json> <out.csv>
 """
 import json
 import os

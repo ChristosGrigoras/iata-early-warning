@@ -7,7 +7,7 @@ prov_ts: 2026-06-20T14:43+03:00
 
 # Narrative classifier — precision spot-check (Signal B validation)
 
-Closes the validation gap flagged in `OBSERVATIONS.md` §4: the narrative LLM (OpenRouter DeepSeek) is the novel half of the method and carries the headline's formal June-2021 fire, yet had no precision evidence. This is a reviewer-adjudicated spot-check of the headline label `runway incursion / ground conflict / surface movement`. Reproducible via `production/build/validate_narrative_labels.py`. [OP48 | 2026-06-20T14:43+03:00 | P0021]
+Closes the validation gap flagged in `OBSERVATIONS.md` §4: the narrative LLM (OpenRouter DeepSeek) is the novel half of the method and carries the headline's formal June-2021 fire, yet had no precision evidence. This is a reviewer-adjudicated spot-check of the headline label `runway incursion / ground conflict / surface movement`. Reproducible via `production/build/P04_validate_narrative_labels.py`. [OP48 | 2026-06-20T14:43+03:00 | P0021]
 
 ## Method & scope (state the limits up front)
 
@@ -36,7 +36,7 @@ Closes the validation gap flagged in `OBSERVATIONS.md` §4: the narrative LLM (O
 
 ## Artifacts
 
-- `production/build/validate_narrative_labels.py` — reproducible sampler + adjudication + precision.
+- `production/build/P04_validate_narrative_labels.py` — reproducible sampler + adjudication + precision.
 - `production/output/narrative_signals/validation/narrative_validation_sample.csv` — the 30 adjudicated rows (ACN, ym, confidence, verdict, synopsis).
 - `production/output/narrative_signals/validation/narrative_validation_by_confidence.csv` — precision by confidence band.
 - Deck appendix slide ("did we validate the language model?") summarizes this. [OP48 | 2026-06-20T14:43+03:00 | P0021]

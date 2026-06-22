@@ -23,7 +23,7 @@ The surface-conflict story rises off its pre-2020 baseline and accelerates throu
 **Why it's the headline:** [OP48 | 2026-06-19T00:30+03:00 | P0005]
 - Sustained and recent (not a one-off spike).
 - **Cross-view validation = structured trend + narrative classifier** (not the two structured fields): the narrative `runway incursion / ground conflict` label independently fires **June 2021** (`narrative_signal_candidates.csv`), agreeing with the Ground-Conflict trend on the *early* timing.
-- **External corroboration:** maps onto the documented 2023 runway-incursion surge (FAA Safety Summit, March 2023) — verified in `phase5-corroboration.md`.
+- **External corroboration:** maps onto the documented 2023 runway-incursion surge (FAA Safety Summit, March 2023) — verified in `P05_signal-corroboration.md`.
 - **Lead time:** ground-conflict share + narrative fire were already climbing in 2021–22, *before* the high-profile 2023 near-collisions and regulatory response → a falsifiable early-warning claim.
 
 ### Detector nuance (state this in Q&A) [OP48 | 2026-06-19T03:58+03:00 | P0016]

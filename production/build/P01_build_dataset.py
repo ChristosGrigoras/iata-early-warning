@@ -8,7 +8,7 @@ name is not globally unique. pandas parses the messy quoting/embedded newlines i
 narratives more robustly than a strict CSV reader; we then dedupe by ACN (yearly
 chunks overlap by one month) and write Parquet for Polars-based analysis.
 
-Usage: python build_dataset.py      # data/raw/*.csv -> data/processed/asrs.parquet
+Usage: python P01_build_dataset.py      # data/raw/*.csv -> data/processed/asrs.parquet
 """
 import glob
 import os

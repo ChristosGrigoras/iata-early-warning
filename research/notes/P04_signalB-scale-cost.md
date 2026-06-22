@@ -40,5 +40,5 @@ Local GLiNER2 (`fastino/gliner2-base-v1`, CPU, DeBERTa-v3-base encoder) measured
 ## If we later flip to "scale"
 
 1. Pioneer Hobby ($5) → run all 80k via `GLiNER2.from_api()` (needs `PIONEER_API_KEY`).
-2. Re-run `03-narrative-signals.ipynb` with `MAX_NARRATIVES` raised to full; the §5 detector logic is unchanged.
+2. Re-run `P04_03-narrative-signals.ipynb` with `MAX_NARRATIVES` raised to full; the §5 detector logic is unchanged.
 3. Then the persistence/lead-time claims for the narrative signal become defensible at full coverage (pilot N is too small for persisted fires). [OP48 | 2026-06-19T01:55+03:00 | P0008]

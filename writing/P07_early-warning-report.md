@@ -50,7 +50,7 @@ This matches how the role's domain actually operates: the value is in *framing, 
 
 **Well-populated signal carriers** include `Anomaly` (99.9%, multi-label taxonomy of what went wrong), `Contributing Factors / Situations`, `Person 1 | Human Factors`, `Aircraft 1 | Flight Phase` (96.7%), and the `Report 1 | Narrative` free text (100%). Multi-label fields are `"; "`-joined and exploded so a report contributes to every category it lists.
 
-A QA-first exploratory pass (`production/build/01-eda.ipynb`) established schema integrity, temporal coverage, missingness, and reporting-bias diagnostics before any modelling.
+A QA-first exploratory pass (`production/build/P02_01-eda.ipynb`) established schema integrity, temporal coverage, missingness, and reporting-bias diagnostics before any modelling.
 
 ---
 
@@ -77,7 +77,7 @@ Every label — whether a structured tag or a narrative-derived label — is tur
 
 The strongest signal is one where **both views agree** — a narrative theme rising in step with a structured category — because they are entirely separate pipelines with different blind spots.
 
-> **Implementation note (honest record).** The narrative labeller was *prototyped* on a local GLiNER2 model (free, CPU). At full coverage that path measured ~66 h on CPU for 80k narratives, so the production run used a hosted zero-shot model — **OpenRouter `deepseek/deepseek-v4-flash`**, concurrent batched calls, across all **79,572** narratives. Only the labelling engine changed; the §3.1 detector logic is identical. (Output files retain a `gliner_label_*` name for historical continuity.) Full reasoning in `production/spec/methodology.md` §6.1 and `research/notes/signalB-scale-cost.md`.
+> **Implementation note (honest record).** The narrative labeller was *prototyped* on a local GLiNER2 model (free, CPU). At full coverage that path measured ~66 h on CPU for 80k narratives, so the production run used a hosted zero-shot model — **OpenRouter `deepseek/deepseek-v4-flash`**, concurrent batched calls, across all **79,572** narratives. Only the labelling engine changed; the §3.1 detector logic is identical. (Output files retain a `gliner_label_*` name for historical continuity.) Full reasoning in `production/spec/P03_methodology.md` §6.1 and `research/notes/P04_signalB-scale-cost.md`.
 
 ---
 
@@ -85,7 +85,7 @@ The strongest signal is one where **both views agree** — a narrative theme ris
 
 The structured detector surfaced **42 candidate series (26 with a persisted fire, 0 gated as taxonomy artifacts)**. The locked headline — chosen because it is falsifiable and externally checkable — is **surface / ground-conflict near-misses**, where a rising *structured trend* and a *persisted narrative fire* coincide.
 
-![Figure 1 — Structured ground-conflict and taxi-phase shares with the independent narrative runway-incursion line (♦ marks the narrative fire, June 2021); the amber band is the pre-crisis lead-time window.](assets/hero_surface_conflict.png)
+![Figure 1 — Structured ground-conflict and taxi-phase shares with the independent narrative runway-incursion line (♦ marks the narrative fire, June 2021); the amber band is the pre-crisis lead-time window.](assets/P07_hero_surface_conflict.png)
 
 **The structured `Conflict Ground Conflict` share roughly doubled:**
 
@@ -125,7 +125,7 @@ No. Checked directly against the count series:
 | 2024 | 606 | 5,427 | 11.2% |
 | 2025 | 642 | 6,109 | 10.5% |
 
-![Figure 2 — Ground-conflict raw count (numerator) vs total monthly reports (denominator): the numerator roughly tripled while the base stayed flat.](assets/rawcount_ground_conflict.png)
+![Figure 2 — Ground-conflict raw count (numerator) vs total monthly reports (denominator): the numerator roughly tripled while the base stayed flat.](assets/P07_rawcount_ground_conflict.png)
 
 The **numerator roughly tripled** while the **denominator stayed in a flat ~4,500–6,100/yr band**. Because `Anomaly` is **multi-label**, category shares do not sum to 100% — one category rising does not mechanically force another down, so the naive pie-slice artifact does not apply. External absolute counts rose independently.
 
@@ -143,19 +143,19 @@ The single biggest challenge — *more flying ⇒ more conflicts, mechanically* 
 - **Seasonality:** fires require positive YoY change.
 - **Units caveat:** external counts are fiscal-year, raw; the figures here are calendar-month share — directionally consistent, *not* like-for-like (stated explicitly).
 
-![Figure 3 — Two independent detectors on one axis: the structured taxonomy tag and the narrative LLM both rise into 2021–24 (agreement in direction and timing, not level).](assets/crossview_overlay.png)
+![Figure 3 — Two independent detectors on one axis: the structured taxonomy tag and the narrative LLM both rise into 2021–24 (agreement in direction and timing, not level).](assets/P07_crossview_overlay.png)
 
 ### 5.4 Does the z-threshold assume normality? (distributional check)
 
-The robust *z* carries a normal-theory reading (z ≥ 2 ≈ a 1-in-20 deviation), so the share distribution was checked directly (`make_normality_diagnostic.py`). It is **not** normal: the ground-conflict share is right-skewed (Shapiro–Wilk p ≈ 3×10⁻⁸), and the pooled robust-*z* across all 42 candidate categories is fat-tailed (excess kurtosis +5.1) — empirically `|z| ≥ 3` occurs in **4.2%** of category-months versus the **0.27%** normality would imply (~15×). This does **not** undermine the method: median and MAD assume no distribution, so the detector stays valid. The consequence is interpretive — the 2/3 cut-offs are used as an **empirical screening rank, not calibrated p-values** (no significance level is ever claimed) — and the fat tails are precisely *why* the **persistence rule**, not a p-value, is the real false-positive control: a single extreme month is common, so a signal must hold for three.
+The robust *z* carries a normal-theory reading (z ≥ 2 ≈ a 1-in-20 deviation), so the share distribution was checked directly (`P02_make_normality_diagnostic.py`). It is **not** normal: the ground-conflict share is right-skewed (Shapiro–Wilk p ≈ 3×10⁻⁸), and the pooled robust-*z* across all 42 candidate categories is fat-tailed (excess kurtosis +5.1) — empirically `|z| ≥ 3` occurs in **4.2%** of category-months versus the **0.27%** normality would imply (~15×). This does **not** undermine the method: median and MAD assume no distribution, so the detector stays valid. The consequence is interpretive — the 2/3 cut-offs are used as an **empirical screening rank, not calibrated p-values** (no significance level is ever claimed) — and the fat tails are precisely *why* the **persistence rule**, not a p-value, is the real false-positive control: a single extreme month is common, so a signal must hold for three.
 
-![Figure 4 — Distributional diagnostic. The ground-conflict share is non-normal (A: right-skewed histogram; B: Q–Q tails bend off the line), and the pooled robust-z is markedly fat-tailed versus N(0,1) (C) — so the threshold is a robust screening rank, not a significance test.](assets/normality_diagnostic.png)
+![Figure 4 — Distributional diagnostic. The ground-conflict share is non-normal (A: right-skewed histogram; B: Q–Q tails bend off the line), and the pooled robust-z is markedly fat-tailed versus N(0,1) (C) — so the threshold is a robust screening rank, not a significance test.](assets/P07_normality_diagnostic.png)
 
 ---
 
 ## 6. Validation — was the language model checked?
 
-The narrative LLM is the novel half of the method and carries the formal June-2021 fire, so its output was spot-checked. **30 narratives the model flagged** with the runway label were independently adjudicated (positives only → precision, not recall; confidence-stratified, seeded for reproducibility — `production/build/validate_narrative_labels.py`):
+The narrative LLM is the novel half of the method and carries the formal June-2021 fire, so its output was spot-checked. **30 narratives the model flagged** with the runway label were independently adjudicated (positives only → precision, not recall; confidence-stratified, seeded for reproducibility — `production/build/P04_validate_narrative_labels.py`):
 
 | Metric | Value |
 |---|---|
@@ -175,7 +175,7 @@ The confidence bands are small (n = 8 / 10 / 12), so read the gradient as direct
 
 This worked example is a **proof of concept**. The same pipeline already emits a **ranked monthly watchlist** from both detectors — a short, explainable list of what is emerging and where to look first.
 
-![Figure 5 — Example ranked monthly watchlist produced from both detectors: a short, explainable, prioritised queue for human triage.](assets/watchlist_table.png)
+![Figure 5 — Example ranked monthly watchlist produced from both detectors: a short, explainable, prioritised queue for human triage.](assets/P07_watchlist_table.png)
 
 **Value to a safety team:** instead of waiting for the lagging accident/incident record, an analyst gets a prioritised, *explainable* queue of rising precursors — each traceable to the reports behind it — months earlier. It supports decisions about **where to focus limited inspection, audit, and outreach attention**.
 
@@ -202,15 +202,15 @@ This worked example is a **proof of concept**. The same pipeline already emits a
 
 | Component | Location |
 |---|---|
-| EDA / QA | `production/build/01-eda.ipynb` |
-| Signal A (structured) | `production/build/02-structured-signals.ipynb` |
-| Signal B (narrative LLM + discovery) | `production/build/03-narrative-signals.ipynb` |
-| Method spec (single source of truth) | `production/spec/methodology.md` |
-| External corroboration & bias rule-outs | `research/notes/phase5-corroboration.md` |
-| Narrative validation | `research/notes/narrative-validation.md` |
-| Distributional / normality diagnostic | `production/build/make_normality_diagnostic.py` → `output/eda/normality_diagnostic.png` |
+| EDA / QA | `production/build/P02_01-eda.ipynb` |
+| Signal A (structured) | `production/build/P04_02-structured-signals.ipynb` |
+| Signal B (narrative LLM + discovery) | `production/build/P04_03-narrative-signals.ipynb` |
+| Method spec (single source of truth) | `production/spec/P03_methodology.md` |
+| External corroboration & bias rule-outs | `research/notes/P05_signal-corroboration.md` |
+| Narrative validation | `research/notes/P04_narrative-validation.md` |
+| Distributional / normality diagnostic | `production/build/P02_make_normality_diagnostic.py` → `output/eda/P02_normality_diagnostic.png` |
 | Figures & chart builders | `production/output/`, `production/build/make_*.py` |
-| Presentation | `writing/deck.pdf` |
+| Presentation | `writing/P07_deck.pdf` |
 
 - **Data** is not committed (NASA ASRS public extracts); see the README for the documented download steps.
 - **Environment:** Python 3.12, `requirements.txt` (Polars, pandas, scikit-learn, matplotlib, httpx).

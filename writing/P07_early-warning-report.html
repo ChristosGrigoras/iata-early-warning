@@ -13,7 +13,7 @@
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
   </style>
-  <link rel="stylesheet" href="report.css" />
+  <link rel="stylesheet" href="P07_report.css" />
 </head>
 <body>
 <header id="title-block-header">
@@ -81,7 +81,7 @@
 </tbody>
 </table>
 <p><strong>Well-populated signal carriers</strong> include <code>Anomaly</code> (99.9%, multi-label taxonomy of what went wrong), <code>Contributing Factors / Situations</code>, <code>Person 1 | Human Factors</code>, <code>Aircraft 1 | Flight Phase</code> (96.7%), and the <code>Report 1 | Narrative</code> free text (100%). Multi-label fields are <code>"; "</code>-joined and exploded so a report contributes to every category it lists.</p>
-<p>A QA-first exploratory pass (<code>production/build/01-eda.ipynb</code>) established schema integrity, temporal coverage, missingness, and reporting-bias diagnostics before any modelling.</p>
+<p>A QA-first exploratory pass (<code>production/build/P02_01-eda.ipynb</code>) established schema integrity, temporal coverage, missingness, and reporting-bias diagnostics before any modelling.</p>
 <hr />
 <h2 id="method-the-operating-model">3. Method — the operating model</h2>
 <p>The architecture is deliberately simple and transparent: <strong>one detection engine, fed by two independent labellers.</strong></p>
@@ -105,13 +105,13 @@
 </ul>
 <p>The strongest signal is one where <strong>both views agree</strong> — a narrative theme rising in step with a structured category — because they are entirely separate pipelines with different blind spots.</p>
 <blockquote>
-<p><strong>Implementation note (honest record).</strong> The narrative labeller was <em>prototyped</em> on a local GLiNER2 model (free, CPU). At full coverage that path measured ~66 h on CPU for 80k narratives, so the production run used a hosted zero-shot model — <strong>OpenRouter <code>deepseek/deepseek-v4-flash</code></strong>, concurrent batched calls, across all <strong>79,572</strong> narratives. Only the labelling engine changed; the §3.1 detector logic is identical. (Output files retain a <code>gliner_label_*</code> name for historical continuity.) Full reasoning in <code>production/spec/methodology.md</code> §6.1 and <code>research/notes/signalB-scale-cost.md</code>.</p>
+<p><strong>Implementation note (honest record).</strong> The narrative labeller was <em>prototyped</em> on a local GLiNER2 model (free, CPU). At full coverage that path measured ~66 h on CPU for 80k narratives, so the production run used a hosted zero-shot model — <strong>OpenRouter <code>deepseek/deepseek-v4-flash</code></strong>, concurrent batched calls, across all <strong>79,572</strong> narratives. Only the labelling engine changed; the §3.1 detector logic is identical. (Output files retain a <code>gliner_label_*</code> name for historical continuity.) Full reasoning in <code>production/spec/P03_methodology.md</code> §6.1 and <code>research/notes/P04_signalB-scale-cost.md</code>.</p>
 </blockquote>
 <hr />
 <h2 id="finding-surface-runway-near-misses-rose-early">4. Finding — surface &amp; runway near-misses rose early</h2>
 <p>The structured detector surfaced <strong>42 candidate series (26 with a persisted fire, 0 gated as taxonomy artifacts)</strong>. The locked headline — chosen because it is falsifiable and externally checkable — is <strong>surface / ground-conflict near-misses</strong>, where a rising <em>structured trend</em> and a <em>persisted narrative fire</em> coincide.</p>
 <figure>
-<img src="assets/hero_surface_conflict.png" alt="" /><figcaption>Figure 1 — Structured ground-conflict and taxi-phase shares with the independent narrative runway-incursion line (♦ marks the narrative fire, June 2021); the amber band is the pre-crisis lead-time window.</figcaption>
+<img src="assets/P07_hero_surface_conflict.png" alt="" /><figcaption>Figure 1 — Structured ground-conflict and taxi-phase shares with the independent narrative runway-incursion line (♦ marks the narrative fire, June 2021); the amber band is the pre-crisis lead-time window.</figcaption>
 </figure>
 <p><strong>The structured <code>Conflict Ground Conflict</code> share roughly doubled:</strong></p>
 <table>
@@ -230,7 +230,7 @@
 </tbody>
 </table>
 <figure>
-<img src="assets/rawcount_ground_conflict.png" alt="" /><figcaption>Figure 2 — Ground-conflict raw count (numerator) vs total monthly reports (denominator): the numerator roughly tripled while the base stayed flat.</figcaption>
+<img src="assets/P07_rawcount_ground_conflict.png" alt="" /><figcaption>Figure 2 — Ground-conflict raw count (numerator) vs total monthly reports (denominator): the numerator roughly tripled while the base stayed flat.</figcaption>
 </figure>
 <p>The <strong>numerator roughly tripled</strong> while the <strong>denominator stayed in a flat ~4,500–6,100/yr band</strong>. Because <code>Anomaly</code> is <strong>multi-label</strong>, category shares do not sum to 100% — one category rising does not mechanically force another down, so the naive pie-slice artifact does not apply. External absolute counts rose independently.</p>
 <h3 id="isnt-it-just-the-post-covid-traffic-rebound">5.2 Isn’t it just the post-COVID traffic rebound?</h3>
@@ -247,16 +247,16 @@
 <li><strong>Units caveat:</strong> external counts are fiscal-year, raw; the figures here are calendar-month share — directionally consistent, <em>not</em> like-for-like (stated explicitly).</li>
 </ul>
 <figure>
-<img src="assets/crossview_overlay.png" alt="" /><figcaption>Figure 3 — Two independent detectors on one axis: the structured taxonomy tag and the narrative LLM both rise into 2021–24 (agreement in direction and timing, not level).</figcaption>
+<img src="assets/P07_crossview_overlay.png" alt="" /><figcaption>Figure 3 — Two independent detectors on one axis: the structured taxonomy tag and the narrative LLM both rise into 2021–24 (agreement in direction and timing, not level).</figcaption>
 </figure>
 <h3 id="does-the-z-threshold-assume-normality-distributional-check">5.4 Does the z-threshold assume normality? (distributional check)</h3>
-<p>The robust <em>z</em> carries a normal-theory reading (z ≥ 2 ≈ a 1-in-20 deviation), so the share distribution was checked directly (<code>make_normality_diagnostic.py</code>). It is <strong>not</strong> normal: the ground-conflict share is right-skewed (Shapiro–Wilk p ≈ 3×10⁻⁸), and the pooled robust-<em>z</em> across all 42 candidate categories is fat-tailed (excess kurtosis +5.1) — empirically <code>|z| ≥ 3</code> occurs in <strong>4.2%</strong> of category-months versus the <strong>0.27%</strong> normality would imply (~15×). This does <strong>not</strong> undermine the method: median and MAD assume no distribution, so the detector stays valid. The consequence is interpretive — the 2/3 cut-offs are used as an <strong>empirical screening rank, not calibrated p-values</strong> (no significance level is ever claimed) — and the fat tails are precisely <em>why</em> the <strong>persistence rule</strong>, not a p-value, is the real false-positive control: a single extreme month is common, so a signal must hold for three.</p>
+<p>The robust <em>z</em> carries a normal-theory reading (z ≥ 2 ≈ a 1-in-20 deviation), so the share distribution was checked directly (<code>P02_make_normality_diagnostic.py</code>). It is <strong>not</strong> normal: the ground-conflict share is right-skewed (Shapiro–Wilk p ≈ 3×10⁻⁸), and the pooled robust-<em>z</em> across all 42 candidate categories is fat-tailed (excess kurtosis +5.1) — empirically <code>|z| ≥ 3</code> occurs in <strong>4.2%</strong> of category-months versus the <strong>0.27%</strong> normality would imply (~15×). This does <strong>not</strong> undermine the method: median and MAD assume no distribution, so the detector stays valid. The consequence is interpretive — the 2/3 cut-offs are used as an <strong>empirical screening rank, not calibrated p-values</strong> (no significance level is ever claimed) — and the fat tails are precisely <em>why</em> the <strong>persistence rule</strong>, not a p-value, is the real false-positive control: a single extreme month is common, so a signal must hold for three.</p>
 <figure>
-<img src="assets/normality_diagnostic.png" alt="" /><figcaption>Figure 4 — Distributional diagnostic. The ground-conflict share is non-normal (A: right-skewed histogram; B: Q–Q tails bend off the line), and the pooled robust-z is markedly fat-tailed versus N(0,1) (C) — so the threshold is a robust screening rank, not a significance test.</figcaption>
+<img src="assets/P07_normality_diagnostic.png" alt="" /><figcaption>Figure 4 — Distributional diagnostic. The ground-conflict share is non-normal (A: right-skewed histogram; B: Q–Q tails bend off the line), and the pooled robust-z is markedly fat-tailed versus N(0,1) (C) — so the threshold is a robust screening rank, not a significance test.</figcaption>
 </figure>
 <hr />
 <h2 id="validation-was-the-language-model-checked">6. Validation — was the language model checked?</h2>
-<p>The narrative LLM is the novel half of the method and carries the formal June-2021 fire, so its output was spot-checked. <strong>30 narratives the model flagged</strong> with the runway label were independently adjudicated (positives only → precision, not recall; confidence-stratified, seeded for reproducibility — <code>production/build/validate_narrative_labels.py</code>):</p>
+<p>The narrative LLM is the novel half of the method and carries the formal June-2021 fire, so its output was spot-checked. <strong>30 narratives the model flagged</strong> with the runway label were independently adjudicated (positives only → precision, not recall; confidence-stratified, seeded for reproducibility — <code>production/build/P04_validate_narrative_labels.py</code>):</p>
 <table>
 <colgroup>
 <col style="width: 50%" />
@@ -290,7 +290,7 @@
 <h2 id="from-one-signal-to-a-monthly-watchlist-decision-support">7. From one signal to a monthly watchlist (decision-support)</h2>
 <p>This worked example is a <strong>proof of concept</strong>. The same pipeline already emits a <strong>ranked monthly watchlist</strong> from both detectors — a short, explainable list of what is emerging and where to look first.</p>
 <figure>
-<img src="assets/watchlist_table.png" alt="" /><figcaption>Figure 5 — Example ranked monthly watchlist produced from both detectors: a short, explainable, prioritised queue for human triage.</figcaption>
+<img src="assets/P07_watchlist_table.png" alt="" /><figcaption>Figure 5 — Example ranked monthly watchlist produced from both detectors: a short, explainable, prioritised queue for human triage.</figcaption>
 </figure>
 <p><strong>Value to a safety team:</strong> instead of waiting for the lagging accident/incident record, an analyst gets a prioritised, <em>explainable</em> queue of rising precursors — each traceable to the reports behind it — months earlier. It supports decisions about <strong>where to focus limited inspection, audit, and outreach attention</strong>.</p>
 <p><strong>How it would slot into practice:</strong> - <strong>Monthly run</strong> on the latest ASRS extract; the freshest 2 months flagged soft (reporting lag). - <strong>Human-in-the-loop triage</strong> — candidates, not alarms; an analyst confirms or dismisses, building a feedback record. - <strong>Cross-source corroboration</strong> for anything that fires, exactly as done here.</p>
@@ -314,31 +314,31 @@
 <tbody>
 <tr class="odd">
 <td>EDA / QA</td>
-<td><code>production/build/01-eda.ipynb</code></td>
+<td><code>production/build/P02_01-eda.ipynb</code></td>
 </tr>
 <tr class="even">
 <td>Signal A (structured)</td>
-<td><code>production/build/02-structured-signals.ipynb</code></td>
+<td><code>production/build/P04_02-structured-signals.ipynb</code></td>
 </tr>
 <tr class="odd">
 <td>Signal B (narrative LLM + discovery)</td>
-<td><code>production/build/03-narrative-signals.ipynb</code></td>
+<td><code>production/build/P04_03-narrative-signals.ipynb</code></td>
 </tr>
 <tr class="even">
 <td>Method spec (single source of truth)</td>
-<td><code>production/spec/methodology.md</code></td>
+<td><code>production/spec/P03_methodology.md</code></td>
 </tr>
 <tr class="odd">
 <td>External corroboration &amp; bias rule-outs</td>
-<td><code>research/notes/phase5-corroboration.md</code></td>
+<td><code>research/notes/P05_signal-corroboration.md</code></td>
 </tr>
 <tr class="even">
 <td>Narrative validation</td>
-<td><code>research/notes/narrative-validation.md</code></td>
+<td><code>research/notes/P04_narrative-validation.md</code></td>
 </tr>
 <tr class="odd">
 <td>Distributional / normality diagnostic</td>
-<td><code>production/build/make_normality_diagnostic.py</code> → <code>output/eda/normality_diagnostic.png</code></td>
+<td><code>production/build/P02_make_normality_diagnostic.py</code> → <code>output/eda/P02_normality_diagnostic.png</code></td>
 </tr>
 <tr class="even">
 <td>Figures &amp; chart builders</td>
@@ -346,7 +346,7 @@
 </tr>
 <tr class="odd">
 <td>Presentation</td>
-<td><code>writing/deck.pdf</code></td>
+<td><code>writing/P07_deck.pdf</code></td>
 </tr>
 </tbody>
 </table>

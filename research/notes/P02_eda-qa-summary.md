@@ -5,7 +5,7 @@ primary: OP48
 
 # EDA QA summary (Phase 2)
 
-Generated from `production/build/01-eda.ipynb` against `data/processed/asrs.parquet`. [OP48]
+Generated from `production/build/P02_01-eda.ipynb` against `data/processed/asrs.parquet`. [OP48]
 
 ## Dataset sanity
 
@@ -30,17 +30,17 @@ Generated from `production/build/01-eda.ipynb` against `data/processed/asrs.parq
 
 In `production/output/eda/`:
 
-- `monthly_volume_trend.png`
-- `top_anomalies.png`
-- `phase_model_concentration.png`
-- `reporting_bias_proxies.png`
+- `P02_monthly_volume_trend.png`
+- `P02_top_anomalies.png`
+- `P02_phase_model_concentration.png`
+- `P02_reporting_bias_proxies.png`
 - `missingness_top25.csv`
 - `monthly_spikes_top10.csv`
 - `qa_summary.csv`
 
 ## Known caveat — multi-label categorical fields [OP48]
 
-`Anomaly` is **multi-valued**: 77.8% of reports carry `; `-joined labels. The Phase-2 `top_anomalies.png` chart groups **exact-string combinations**, so it understates true category frequency and mis-ranks. After splitting on `; `, the true top categories are:
+`Anomaly` is **multi-valued**: 77.8% of reports carry `; `-joined labels. The Phase-2 `P02_top_anomalies.png` chart groups **exact-string combinations**, so it understates true category frequency and mis-ranks. After splitting on `; `, the true top categories are:
 
 1. `Deviation / Discrepancy - Procedural …` ≈ 40,327
 2. `Aircraft Equipment Problem Critical` ≈ 19,185 (vs. 6,577 as an exact string)

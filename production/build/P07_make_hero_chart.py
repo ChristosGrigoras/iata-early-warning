@@ -136,7 +136,7 @@ def main() -> None:
               bbox_to_anchor=(0.0, 0.86))
 
     fig.tight_layout()
-    out = OUT_DIR / "hero_surface_conflict.png"
+    out = OUT_DIR / "P07_hero_surface_conflict.png"
     fig.savefig(out, bbox_inches="tight", facecolor="white")
     print(f"wrote {out}")
 

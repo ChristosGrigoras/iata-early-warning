@@ -5,7 +5,7 @@ primary: OP48
 
 # Methodology spec — early-warning signal detection (Phase 3)
 
-Defines *exactly* what we compute and what counts as a "signal," so Phase 4 implementation is mechanical. Builds on `production/brief/early-warning-brief.md` and `research/notes/eda-qa-summary.md`. [OP48]
+Defines *exactly* what we compute and what counts as a "signal," so Phase 4 implementation is mechanical. Builds on `production/brief/P00_early-warning-brief.md` and `research/notes/P02_eda-qa-summary.md`. [OP48]
 
 ## 1. Unit of analysis & time base
 
@@ -101,7 +101,7 @@ Because O&D is absent, geographic/route analysis is limited to:
 
 ## 3. Multi-label categorical handling (mandatory)
 
-`Anomaly`, `Contributing Factors / Situations`, `Human Factors`, and `Flight Phase` are `; `-joined multi-label fields (77.8% of `Anomaly` rows are multi-label). For each, **split on `"; "` and explode**, so one report contributes to every category it lists. All category series are built on the exploded form. (The Phase-2 `top_anomalies.png` used exact-string combos and will be regenerated on the exploded form.)
+`Anomaly`, `Contributing Factors / Situations`, `Human Factors`, and `Flight Phase` are `; `-joined multi-label fields (77.8% of `Anomaly` rows are multi-label). For each, **split on `"; "` and explode**, so one report contributes to every category it lists. All category series are built on the exploded form. (The Phase-2 `P02_top_anomalies.png` used exact-string combos and will be regenerated on the exploded form.)
 
 ## 4. Reporting-bias normalization (the credibility core)
 
@@ -141,9 +141,9 @@ Independent, free-text view that can surface issues *before* they get a taxonomy
 
 ### 6.1 Core — zero-shot risk classification
 
-> **Implementation update (realized build).** This spec planned a *local GLiNER2* labeller (CPU, free, 205M params) as the zero-shot core. At full-coverage implementation that path measured **~66 h for 80k narratives on CPU** (see `research/notes/signalB-scale-cost.md`), so the labeller was instead run via **OpenRouter → DeepSeek V4 Flash** (`deepseek/deepseek-v4-flash`), concurrent batched calls, across all **79,572** narratives. Only the labelling *engine* changed; everything downstream — the §5 share → robust-z → persistence → bias-guard logic — is identical. Output artifacts keep the `gliner_label_*` filename for historical continuity.
+> **Implementation update (realized build).** This spec planned a *local GLiNER2* labeller (CPU, free, 205M params) as the zero-shot core. At full-coverage implementation that path measured **~66 h for 80k narratives on CPU** (see `research/notes/P04_signalB-scale-cost.md`), so the labeller was instead run via **OpenRouter → DeepSeek V4 Flash** (`deepseek/deepseek-v4-flash`), concurrent batched calls, across all **79,572** narratives. Only the labelling *engine* changed; everything downstream — the §5 share → robust-z → persistence → bias-guard logic — is identical. Output artifacts keep the `gliner_label_*` filename for historical continuity.
 
-- **Method:** define **~10–15 candidate risk labels** in plain English (e.g. `runway incursion / ground conflict` (the locked headline — see `research/notes/signal-interpretation.md`), `GPS interference / jamming`, `lithium battery / thermal`, `unstabilized approach`, `UAS / drone encounter`, `fatigue`, `automation surprise / mode confusion`, `laser strike`, `wake turbulence`, `ATC staffing / workload`). Zero-shot, no training required (the pilot ran GLiNER2 on CPU with no external API; the realized full run used the hosted DeepSeek V4 Flash labeller — see the §6.1 note).
+- **Method:** define **~10–15 candidate risk labels** in plain English (e.g. `runway incursion / ground conflict` (the locked headline — see `research/notes/P04_signal-interpretation.md`), `GPS interference / jamming`, `lithium battery / thermal`, `unstabilized approach`, `UAS / drone encounter`, `fatigue`, `automation surprise / mode confusion`, `laser strike`, `wake turbulence`, `ATC staffing / workload`). Zero-shot, no training required (the pilot ran GLiNER2 on CPU with no external API; the realized full run used the hosted DeepSeek V4 Flash labeller — see the §6.1 note).
 - **Trend:** for each label, build the **monthly share** of narratives tagged with it → apply the §5 anomaly/persistence/bias-guard logic identically.
 - **Why core:** interpretable ("share of reports mentioning X over time"), cheap, on-theme for responsible AI. **Limitation, stated up front:** only finds what we name → confirmation-bias risk, which §6.2 defends against.
 - **Calibration:** eyeball ~30 narratives per label to set `cls_threshold` before trusting the series.
@@ -210,8 +210,8 @@ Strongest early signal = a **narrative theme rising in share that maps onto a ri
 
 ## 10. Phase 4 build plan (notebooks)
 
-- `02-structured-signals.ipynb` — Signal A: exploded category share series, robust-z anomaly + persistence + §5.1 bias guards, ranked candidate table + plots. **(Build first.)**
-- `03-narrative-signals.ipynb` — Signal B: zero-shot LLM labels (realized: OpenRouter DeepSeek V4 Flash; see §6.1 note) → monthly share trends (§6.1), plus unsupervised discovery pass (§6.2) for unnamed emergents.
+- `P04_02-structured-signals.ipynb` — Signal A: exploded category share series, robust-z anomaly + persistence + §5.1 bias guards, ranked candidate table + plots. **(Build first.)**
+- `P04_03-narrative-signals.ipynb` — Signal B: zero-shot LLM labels (realized: OpenRouter DeepSeek V4 Flash; see §6.1 note) → monthly share trends (§6.1), plus unsupervised discovery pass (§6.2) for unnamed emergents.
 - `04-combine-validate.ipynb` — cross-view agreement, retrospective lead-time headline + current watchlist, external corroboration.
 
 ## Decisions log

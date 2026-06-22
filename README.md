@@ -4,7 +4,7 @@
 
 > **Headline finding.** Surface / runway "ground-conflict" near-misses began rising in **2021–2022 — roughly 12–18 months before** the public inflection (the FAA's March 2023 emergency Safety Summit and the August 2023 *New York Times* close-calls exposé). Two independent views agreed in direction and timing: the **structured** ground-conflict share roughly doubled, while a **zero-shot language model** reading the free-text narratives **fired** on runway incursions in **June 2021**.
 
-![Ground-conflict and narrative runway-incursion shares rising before the 2023 crisis](production/output/deck/hero_surface_conflict.png)
+![Ground-conflict and narrative runway-incursion shares rising before the 2023 crisis](production/output/deck/P07_hero_surface_conflict.png)
 
 ---
 
@@ -12,10 +12,10 @@
 
 | | File | What |
 |---|---|---|
-| 📄 **Report** | [`writing/early-warning-report.pdf`](writing/early-warning-report.pdf) | The standalone written analysis (framing → method → finding → robustness → validation → decision-support). **Start here.** |
-| 📊 **Slides** | [`writing/deck.pdf`](writing/deck.pdf) | 6-slide presentation (+ appendix) for the interview. |
+| 📄 **Report** | [`writing/P07_early-warning-report.pdf`](writing/P07_early-warning-report.pdf) | The standalone written analysis (framing → method → finding → robustness → validation → decision-support). **Start here.** |
+| 📊 **Slides** | [`writing/P07_deck.pdf`](writing/P07_deck.pdf) | 6-slide presentation (+ appendix) for the interview. |
 | 📓 **Notebooks** | [`production/build/`](production/build/) | Executed, supporting code (EDA, structured signals, narrative signals). |
-| 📐 **Method spec** | [`production/spec/methodology.md`](production/spec/methodology.md) | Exact definitions — metric, detector, thresholds, bias guards. |
+| 📐 **Method spec** | [`production/spec/P03_methodology.md`](production/spec/P03_methodology.md) | Exact definitions — metric, detector, thresholds, bias guards. |
 
 ---
 
@@ -42,19 +42,19 @@ README.md                        This file
 requirements.txt                 Python dependencies
 
 writing/
-  early-warning-report.pdf/.md   ► PRIMARY report (+ report.css)
-  deck.pdf / deck.md             ► Slides (Marp source + render)
+  P07_early-warning-report.pdf/.md   ► PRIMARY report (+ P07_report.css)
+  P07_deck.pdf / P07_deck.md             ► Slides (Marp source + render)
   assets/                        Figures used by report & deck
 
 production/
   build/                         Notebooks + scripts (run from here)
-    01-eda.ipynb                 EDA / data QA
-    02-structured-signals.ipynb  Signal A (structured taxonomy trends)
-    03-narrative-signals.ipynb   Signal B (zero-shot LLM + topic discovery)
-    build_dataset.py             Raw CSV → processed parquet
+    P02_01-eda.ipynb                 EDA / data QA
+    P04_02-structured-signals.ipynb  Signal A (structured taxonomy trends)
+    P04_03-narrative-signals.ipynb   Signal B (zero-shot LLM + topic discovery)
+    P01_build_dataset.py             Raw CSV → processed parquet
     make_*.py                    Chart builders
-    validate_narrative_labels.py Narrative-classifier precision spot-check
-  spec/methodology.md            ► Method spec (single source of truth)
+    P04_validate_narrative_labels.py Narrative-classifier precision spot-check
+  spec/P03_methodology.md            ► Method spec (single source of truth)
   output/                        Figures, signal tables, derived parquets
 
 research/notes/                  Data source, corroboration, validation, cost
@@ -93,17 +93,17 @@ The ASRS data is NASA's public extract and is not redistributed here.
 3. Save chunks as `data/raw/asrs_<YYYY>.csv` (2011–2025).
 4. Build the processed dataset:
    ```bash
-   python production/build/build_dataset.py   # → data/processed/asrs.parquet (80,047 reports)
+   python production/build/P01_build_dataset.py   # → data/processed/asrs.parquet (80,047 reports)
    ```
 
-Full export recipe (fields, schema, chunking, verified method) is in [`research/notes/asrs-data-source.md`](research/notes/asrs-data-source.md). NASA was changing the DB structure as of mid-2026, so pin your export date.
+Full export recipe (fields, schema, chunking, verified method) is in [`research/notes/P01_asrs-data-source.md`](research/notes/P01_asrs-data-source.md). NASA was changing the DB structure as of mid-2026, so pin your export date.
 
 ### 3. Run the analysis
 Run the notebooks in order from the repo root (they resolve paths automatically):
 ```
-production/build/01-eda.ipynb          → production/output/eda/
-production/build/02-structured-signals.ipynb → production/output/signals/
-production/build/03-narrative-signals.ipynb  → production/output/narrative_signals/
+production/build/P02_01-eda.ipynb          → production/output/eda/
+production/build/P04_02-structured-signals.ipynb → production/output/signals/
+production/build/P04_03-narrative-signals.ipynb  → production/output/narrative_signals/
 ```
 
 **Signal B (narrative) needs an LLM key:**
@@ -115,9 +115,9 @@ The derived label parquets are **committed**, so you can inspect Signal B's resu
 
 ### 4. Rebuild figures / documents (optional)
 ```bash
-python production/build/make_hero_chart.py        # and the other make_*.py
-# Slides:  marp writing/deck.md --html --pdf -o writing/deck.pdf
-# Report:  pandoc writing/early-warning-report.md --css report.css -o report.html  (then print to PDF)
+python production/build/P07_make_hero_chart.py        # and the other make_*.py
+# Slides:  marp writing/P07_deck.md --html --pdf -o writing/P07_deck.pdf
+# Report:  pandoc writing/P07_early-warning-report.md --css P07_report.css -o report.html  (then print to PDF)
 ```
 
 ---
@@ -125,7 +125,7 @@ python production/build/make_hero_chart.py        # and the other make_*.py
 ## Data & sources
 
 - **Primary:** NASA ASRS — https://asrs.arc.nasa.gov (public, voluntary, de-identified incident reports).
-- **Corroboration:** FAA (Aviation Safety Summit readout; *Air Traffic by the Numbers*; Runway Safety Statistics), DOT OIG runway-incursion report (Mar 2025), NYT (Aug 21, 2023), Honeywell Aerospace. Full list in [`research/notes/phase5-corroboration.md`](research/notes/phase5-corroboration.md).
+- **Corroboration:** FAA (Aviation Safety Summit readout; *Air Traffic by the Numbers*; Runway Safety Statistics), DOT OIG runway-incursion report (Mar 2025), NYT (Aug 21, 2023), Honeywell Aerospace. Full list in [`research/notes/P05_signal-corroboration.md`](research/notes/P05_signal-corroboration.md).
 
 ## Scope & honesty
 

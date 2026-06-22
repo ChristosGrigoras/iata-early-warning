@@ -243,7 +243,7 @@ ul { line-height: 1.5; }
 img[alt~=&quot;hero&quot;] { box-shadow: 0 2px 14px rgba(14,79,158,0.18); border-radius: 6px; }
 ;" data-marpit-pagination-total="12" data-size="16:9">
 <h2 id="finding-runway--taxiway-near-misses-rose-early">Finding: runway &amp; taxiway near-misses rose early</h2>
-<p><img src="assets/hero_surface_conflict.png" alt="hero" style="width:600px;" /></p>
+<p><img src="assets/P07_hero_surface_conflict.png" alt="hero" style="width:600px;" /></p>
 <p><span style="font-size:18px; line-height:1.4;">The structured &quot;ground-conflict&quot; tag roughly <span class="amber">doubled — ~5% of reports to ~11% by 2024</span> (the raw count tripled too — not a denominator artifact). Independently, the narrative view (<img class="emoji" draggable="false" alt="♦" src="https://cdn.jsdelivr.net/gh/jdecked/twemoji@17.0.2/assets/svg/2666.svg" data-marp-twemoji=""/>) began flagging runway-incursion reports in <span class="amber">June 2021</span> — both ahead of the 2023 crisis.</span></p>
 <p><span class="small amber">The telling part: the <em>structured</em> share spiked above threshold again and again (its <em>z</em> hit ~6) — but too erratically to ever hold the <strong>3-month persistence rule</strong>, so it never registered a fire. The <em>narrative</em> signal rose smoothly enough to persist — and fired <strong>June 2021</strong>. Same risk, two different failure modes — which is why both are run.</span></p>
 <footer>IATA Senior Data Scientist · case study · data: NASA ASRS 2011–2025</footer>
@@ -588,7 +588,7 @@ img[alt~=&quot;hero&quot;] { box-shadow: 0 2px 14px rgba(14,79,158,0.18); border
 <li>This case is the <strong>proof of concept</strong> — the same pipeline already produces a <strong>ranked monthly watchlist</strong> from both detectors.</li>
 <li><strong>Value to a safety team:</strong> a short, explainable list of <em>what is emerging and where to look first — months earlier.</em></li>
 </ul>
-<p><img src="assets/watchlist_table.png" alt="" style="width:870px;" /></p>
+<p><img src="assets/P07_watchlist_table.png" alt="" style="width:870px;" /></p>
 <p><span class="small"><strong>Next:</strong> join FAA traffic &amp; controller-staffing data (to test causation) and NTSB outcomes (do these precursors lead to accidents?).</span></p>
 <footer>IATA Senior Data Scientist · case study · data: NASA ASRS 2011–2025</footer>
 </section>
@@ -733,7 +733,7 @@ ul { line-height: 1.5; }
 img[alt~=&quot;hero&quot;] { box-shadow: 0 2px 14px rgba(14,79,158,0.18); border-radius: 6px; }
 ;" data-marpit-pagination-total="12" data-size="16:9">
 <h2 id="appendix--the-share-rise-isnt-a-denominator-artifact">Appendix — the share rise isn't a denominator artifact</h2>
-<p><img src="assets/rawcount_ground_conflict.png" alt="" style="width:680px;" /></p>
+<p><img src="assets/P07_rawcount_ground_conflict.png" alt="" style="width:680px;" /></p>
 <p><span style="font-size:18px; line-height:1.4;">A rising <em>share</em> could be an artifact if the denominator shrank or other categories collapsed. It isn't: the <span class="amber">raw ground-conflict count roughly tripled</span> (≈230 → 640 reports/yr) while <span class="amber">total monthly reporting stayed flat</span> — the numerator rose on its own. ASRS anomaly tags are <em>multi-label</em>, so category shares don't sum to 100% (one rising doesn't force another down), and the FAA's <em>absolute</em> incursion counts rose independently. Share, raw count, and external data all point the same way.</span></p>
 <footer>IATA Senior Data Scientist · case study · data: NASA ASRS 2011–2025</footer>
 </section>
@@ -805,7 +805,7 @@ ul { line-height: 1.5; }
 img[alt~=&quot;hero&quot;] { box-shadow: 0 2px 14px rgba(14,79,158,0.18); border-radius: 6px; }
 ;" data-marpit-pagination-total="12" data-size="16:9">
 <h2 id="appendix--two-independent-detectors-same-trend">Appendix — two independent detectors, same trend</h2>
-<p><img src="assets/crossview_overlay.png" alt="" style="width:740px;" /></p>
+<p><img src="assets/P07_crossview_overlay.png" alt="" style="width:740px;" /></p>
 <p><span style="font-size:18px; line-height:1.4;">The headline's cross-view check, on one axis. The <span class="amber">structured</span> taxonomy tag and the <span class="amber">narrative</span> LLM — entirely separate pipelines — both rise into 2021–24. What agrees is the <em>direction and timing</em>, not the level: the narrative label sits at a higher base rate because it's broader. The narrative view fires <strong>June 2021</strong>; the structured trend confirms. <span class="amber">(The 2022 share dip is a reporting-volume rebound — the underlying counts kept rising.)</span></span></p>
 <footer>IATA Senior Data Scientist · case study · data: NASA ASRS 2011–2025</footer>
 </section>
@@ -967,7 +967,7 @@ ul { line-height: 1.5; }
 img[alt~=&quot;hero&quot;] { box-shadow: 0 2px 14px rgba(14,79,158,0.18); border-radius: 6px; }
 ;" data-marpit-pagination-total="12" data-size="16:9">
 <h2 id="appendix--is-the-z-threshold-a-p-value-distributional-check">Appendix — is the z-threshold a p-value? (distributional check)</h2>
-<p><img src="assets/normality_diagnostic.png" alt="" style="width:680px;" /></p>
+<p><img src="assets/P07_normality_diagnostic.png" alt="" style="width:680px;" /></p>
 <p><span style="font-size:18px; line-height:1.4;">The robust <em>z</em> reads like a normal-theory score, so the distribution was checked. It <span class="amber">isn't normal</span> — the share series is right-skewed (Shapiro p≈3e-8) and the pooled robust-<em>z</em> is fat-tailed (excess kurtosis +5.1): <span class="amber">|z|≥3 lands in 4.2% of category-months vs the 0.27% normality predicts (~15×)</span>. So median/MAD — which assume no distribution — keep the detector valid; the 2/3 cut-offs are a <span class="amber">screening rank, not calibrated p-values</span>; and the fat tails are exactly why <span class="amber">persistence, not a p-value, is the false-positive control</span>.</span></p>
 <footer>IATA Senior Data Scientist · case study · data: NASA ASRS 2011–2025</footer>
 </section>

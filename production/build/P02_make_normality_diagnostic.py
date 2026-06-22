@@ -12,7 +12,7 @@ is, so the detector can be framed honestly as a *robust screening rank*, not a
 calibrated significance test.
 
 Outputs:
-  - production/output/eda/normality_diagnostic.png (3-panel figure)
+  - production/output/eda/P02_normality_diagnostic.png (3-panel figure)
   - a printed summary block (skew, excess kurtosis, Shapiro/normaltest p,
     empirical vs theoretical z-threshold exceedance rates).
 """
@@ -131,7 +131,7 @@ def main() -> None:
         color=SLATE, fontsize=11, fontweight="bold", y=1.02,
     )
     fig.tight_layout()
-    out = OUT_DIR / "normality_diagnostic.png"
+    out = OUT_DIR / "P02_normality_diagnostic.png"
     fig.savefig(out, dpi=150, bbox_inches="tight")
     print(f"saved {out}")
 

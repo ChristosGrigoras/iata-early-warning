@@ -94,7 +94,7 @@ def main() -> None:
              "Candidates for human review, not alarms · 'peak z' = strength of the share anomaly · status from the persistence rule",
              fontsize=9, color="#6B7280", ha="left", va="top")
 
-    for path in (OUT_DIR / "watchlist_table.png", ASSETS_DIR / "watchlist_table.png"):
+    for path in (OUT_DIR / "P07_watchlist_table.png", ASSETS_DIR / "P07_watchlist_table.png"):
         fig.savefig(path, bbox_inches="tight", facecolor="white", dpi=200)
         print(f"wrote {path}")
 

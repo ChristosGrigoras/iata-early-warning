@@ -13,7 +13,7 @@ estimates precision, not recall). Each sampled synopsis was read and assigned:
   fp     = false positive: no surface/ground element (almost always an
            AIRBORNE NMAC / pattern conflict the model mislabels as "conflict")
 
-Run: python production/build/validate_narrative_labels.py
+Run: python production/build/P04_validate_narrative_labels.py
 """
 
 from pathlib import Path

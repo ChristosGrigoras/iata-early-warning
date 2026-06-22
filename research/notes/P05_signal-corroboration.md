@@ -5,9 +5,9 @@ prov_id: P0010
 prov_ts: 2026-06-19T02:58+03:00
 ---
 
-# Phase 5 — external corroboration & validation of the surface/ground-conflict signal
+# Signal corroboration & validation — surface/ground-conflict signal (Phase 5)
 
-Validates the locked headline (`research/notes/signal-interpretation.md`) against external public sources, quantifies the lead time, confirms the cross-view agreement, and records the bias rule-outs. [OP48 | 2026-06-19T02:58+03:00 | P0010]
+Validates the locked headline (`research/notes/P04_signal-interpretation.md`) against external public sources, quantifies the lead time, confirms the cross-view agreement, and records the bias rule-outs. [OP48 | 2026-06-19T02:58+03:00 | P0010]
 
 ## The signal (internal, from our pipeline)
 
@@ -76,7 +76,7 @@ A share `s_c = count_c / total_c` can rise for a non-signal reason: the **denomi
 - **Not a closed composition:** `Anomaly` is multi-label (a report carries several tags), so category shares do **not** sum to 100% — one category rising does not mechanically force another down. The naive pie-slice artifact does not apply.
 - **External absolute counts** (FAA incursions, raw and per-movement) rose independently — a purely ASRS-internal composition artifact could not produce that agreement.
 
-Chart: `production/output/deck/rawcount_ground_conflict.png` (numerator vs denominator overlay; built by `production/build/make_rawcount_chart.py`). Added to the deck as an appendix / Q&A-backup slide. [OP48 | 2026-06-20T14:21+03:00 | P0020]
+Chart: `production/output/deck/P07_rawcount_ground_conflict.png` (numerator vs denominator overlay; built by `production/build/P07_make_rawcount_chart.py`). Added to the deck as an appendix / Q&A-backup slide. [OP48 | 2026-06-20T14:21+03:00 | P0020]
 
 ## Verdict
 

@@ -6,7 +6,7 @@ completely separate pipelines (taxonomy tags vs. an LLM reading free text).
 
 Honest caveat baked into the subtitle: the narrative label sits at a higher
 base rate (it is broader and bleeds in some airborne conflicts -- see
-validate_narrative_labels.py), so what AGREES across the two views is the
+P04_validate_narrative_labels.py), so what AGREES across the two views is the
 direction/timing of the rise, not the absolute level. IATA palette."""
 
 from pathlib import Path
@@ -87,7 +87,7 @@ def main() -> None:
     ax.legend(loc="upper left", frameon=False, fontsize=9.5, bbox_to_anchor=(0.0, 0.88))
 
     fig.tight_layout()
-    for path in (OUT_DIR / "crossview_overlay.png", ASSETS_DIR / "crossview_overlay.png"):
+    for path in (OUT_DIR / "P07_crossview_overlay.png", ASSETS_DIR / "P07_crossview_overlay.png"):
         fig.savefig(path, bbox_inches="tight", facecolor="white")
         print(f"wrote {path}")
 

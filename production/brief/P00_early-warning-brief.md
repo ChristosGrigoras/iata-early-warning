@@ -59,4 +59,4 @@ Mitigations baked into the framing:
 ## Scope decision (Phase 1) — confirmed
 
 **Broad pull: all report categories across a ~10–15 year window** (target Jan 2011 – Dec 2025). [CG]
-Rationale: emergence detection needs both breadth (to catch *new* themes anywhere) and a long enough baseline for anomaly detection. Executed as **date-chunked DBOL CSV exports** (each chunk ≤10k records). See `research/notes/asrs-data-source.md` for the export recipe.
+Rationale: emergence detection needs both breadth (to catch *new* themes anywhere) and a long enough baseline for anomaly detection. Executed as **date-chunked DBOL CSV exports** (each chunk ≤10k records). See `research/notes/P01_asrs-data-source.md` for the export recipe.
