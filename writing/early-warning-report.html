@@ -249,6 +249,11 @@
 <figure>
 <img src="assets/crossview_overlay.png" alt="" /><figcaption>Figure 3 — Two independent detectors on one axis: the structured taxonomy tag and the narrative LLM both rise into 2021–24 (agreement in direction and timing, not level).</figcaption>
 </figure>
+<h3 id="does-the-z-threshold-assume-normality-distributional-check">5.4 Does the z-threshold assume normality? (distributional check)</h3>
+<p>The robust <em>z</em> carries a normal-theory reading (z ≥ 2 ≈ a 1-in-20 deviation), so the share distribution was checked directly (<code>make_normality_diagnostic.py</code>). It is <strong>not</strong> normal: the ground-conflict share is right-skewed (Shapiro–Wilk p ≈ 3×10⁻⁸), and the pooled robust-<em>z</em> across all 42 candidate categories is fat-tailed (excess kurtosis +5.1) — empirically <code>|z| ≥ 3</code> occurs in <strong>4.2%</strong> of category-months versus the <strong>0.27%</strong> normality would imply (~15×). This does <strong>not</strong> undermine the method: median and MAD assume no distribution, so the detector stays valid. The consequence is interpretive — the 2/3 cut-offs are used as an <strong>empirical screening rank, not calibrated p-values</strong> (no significance level is ever claimed) — and the fat tails are precisely <em>why</em> the <strong>persistence rule</strong>, not a p-value, is the real false-positive control: a single extreme month is common, so a signal must hold for three.</p>
+<figure>
+<img src="assets/normality_diagnostic.png" alt="" /><figcaption>Figure 4 — Distributional diagnostic. The ground-conflict share is non-normal (A: right-skewed histogram; B: Q–Q tails bend off the line), and the pooled robust-z is markedly fat-tailed versus N(0,1) (C) — so the threshold is a robust screening rank, not a significance test.</figcaption>
+</figure>
 <hr />
 <h2 id="validation-was-the-language-model-checked">6. Validation — was the language model checked?</h2>
 <p>The narrative LLM is the novel half of the method and carries the formal June-2021 fire, so its output was spot-checked. <strong>30 narratives the model flagged</strong> with the runway label were independently adjudicated (positives only → precision, not recall; confidence-stratified, seeded for reproducibility — <code>production/build/validate_narrative_labels.py</code>):</p>
@@ -285,7 +290,7 @@
 <h2 id="from-one-signal-to-a-monthly-watchlist-decision-support">7. From one signal to a monthly watchlist (decision-support)</h2>
 <p>This worked example is a <strong>proof of concept</strong>. The same pipeline already emits a <strong>ranked monthly watchlist</strong> from both detectors — a short, explainable list of what is emerging and where to look first.</p>
 <figure>
-<img src="assets/watchlist_table.png" alt="" /><figcaption>Figure 4 — Example ranked monthly watchlist produced from both detectors: a short, explainable, prioritised queue for human triage.</figcaption>
+<img src="assets/watchlist_table.png" alt="" /><figcaption>Figure 5 — Example ranked monthly watchlist produced from both detectors: a short, explainable, prioritised queue for human triage.</figcaption>
 </figure>
 <p><strong>Value to a safety team:</strong> instead of waiting for the lagging accident/incident record, an analyst gets a prioritised, <em>explainable</em> queue of rising precursors — each traceable to the reports behind it — months earlier. It supports decisions about <strong>where to focus limited inspection, audit, and outreach attention</strong>.</p>
 <p><strong>How it would slot into practice:</strong> - <strong>Monthly run</strong> on the latest ASRS extract; the freshest 2 months flagged soft (reporting lag). - <strong>Human-in-the-loop triage</strong> — candidates, not alarms; an analyst confirms or dismisses, building a feedback record. - <strong>Cross-source corroboration</strong> for anything that fires, exactly as done here.</p>
@@ -332,10 +337,14 @@
 <td><code>research/notes/narrative-validation.md</code></td>
 </tr>
 <tr class="odd">
+<td>Distributional / normality diagnostic</td>
+<td><code>production/build/make_normality_diagnostic.py</code> → <code>output/eda/normality_diagnostic.png</code></td>
+</tr>
+<tr class="even">
 <td>Figures &amp; chart builders</td>
 <td><code>production/output/</code>, <code>production/build/make_*.py</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Presentation</td>
 <td><code>writing/deck.pdf</code></td>
 </tr>

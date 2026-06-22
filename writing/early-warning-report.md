@@ -145,6 +145,12 @@ The single biggest challenge — *more flying ⇒ more conflicts, mechanically* 
 
 ![Figure 3 — Two independent detectors on one axis: the structured taxonomy tag and the narrative LLM both rise into 2021–24 (agreement in direction and timing, not level).](assets/crossview_overlay.png)
 
+### 5.4 Does the z-threshold assume normality? (distributional check)
+
+The robust *z* carries a normal-theory reading (z ≥ 2 ≈ a 1-in-20 deviation), so the share distribution was checked directly (`make_normality_diagnostic.py`). It is **not** normal: the ground-conflict share is right-skewed (Shapiro–Wilk p ≈ 3×10⁻⁸), and the pooled robust-*z* across all 42 candidate categories is fat-tailed (excess kurtosis +5.1) — empirically `|z| ≥ 3` occurs in **4.2%** of category-months versus the **0.27%** normality would imply (~15×). This does **not** undermine the method: median and MAD assume no distribution, so the detector stays valid. The consequence is interpretive — the 2/3 cut-offs are used as an **empirical screening rank, not calibrated p-values** (no significance level is ever claimed) — and the fat tails are precisely *why* the **persistence rule**, not a p-value, is the real false-positive control: a single extreme month is common, so a signal must hold for three.
+
+![Figure 4 — Distributional diagnostic. The ground-conflict share is non-normal (A: right-skewed histogram; B: Q–Q tails bend off the line), and the pooled robust-z is markedly fat-tailed versus N(0,1) (C) — so the threshold is a robust screening rank, not a significance test.](assets/normality_diagnostic.png)
+
 ---
 
 ## 6. Validation — was the language model checked?
@@ -169,7 +175,7 @@ The confidence bands are small (n = 8 / 10 / 12), so read the gradient as direct
 
 This worked example is a **proof of concept**. The same pipeline already emits a **ranked monthly watchlist** from both detectors — a short, explainable list of what is emerging and where to look first.
 
-![Figure 4 — Example ranked monthly watchlist produced from both detectors: a short, explainable, prioritised queue for human triage.](assets/watchlist_table.png)
+![Figure 5 — Example ranked monthly watchlist produced from both detectors: a short, explainable, prioritised queue for human triage.](assets/watchlist_table.png)
 
 **Value to a safety team:** instead of waiting for the lagging accident/incident record, an analyst gets a prioritised, *explainable* queue of rising precursors — each traceable to the reports behind it — months earlier. It supports decisions about **where to focus limited inspection, audit, and outreach attention**.
 
@@ -202,6 +208,7 @@ This worked example is a **proof of concept**. The same pipeline already emits a
 | Method spec (single source of truth) | `production/spec/methodology.md` |
 | External corroboration & bias rule-outs | `research/notes/phase5-corroboration.md` |
 | Narrative validation | `research/notes/narrative-validation.md` |
+| Distributional / normality diagnostic | `production/build/make_normality_diagnostic.py` → `output/eda/normality_diagnostic.png` |
 | Figures & chart builders | `production/output/`, `production/build/make_*.py` |
 | Presentation | `writing/deck.pdf` |
 

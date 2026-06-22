@@ -222,3 +222,11 @@ footer: "IATA Senior Data Scientist · case study · data: NASA ASRS 2011–2025
 
 </div>
 </div>
+
+---
+
+## Appendix — is the z-threshold a p-value? (distributional check)
+
+![w:680](assets/normality_diagnostic.png)
+
+<span style="font-size:18px; line-height:1.4;">The robust <em>z</em> reads like a normal-theory score, so the distribution was checked. It <span class="amber">isn't normal</span> — the share series is right-skewed (Shapiro p≈3e-8) and the pooled robust-<em>z</em> is fat-tailed (excess kurtosis +5.1): <span class="amber">|z|≥3 lands in 4.2% of category-months vs the 0.27% normality predicts (~15×)</span>. So median/MAD — which assume no distribution — keep the detector valid; the 2/3 cut-offs are a <span class="amber">screening rank, not calibrated p-values</span>; and the fat tails are exactly why <span class="amber">persistence, not a p-value, is the false-positive control</span>.</span>
