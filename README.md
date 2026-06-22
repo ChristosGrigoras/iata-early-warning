@@ -117,9 +117,11 @@ The derived label parquets are **committed**, so you can inspect Signal B's resu
 
 ### 4. Rebuild figures / documents (optional)
 ```bash
-python production/build/P07_make_hero_chart.py        # and the other make_*.py
-# Slides:  marp writing/P07_deck.md --html --pdf -o writing/P07_deck.pdf
-# Report:  pandoc writing/P07_early-warning-report.md --css P07_report.css -o report.html  (then print to PDF)
+python production/build/P07_make_hero_chart.py        # and the other P07_make_*.py chart builders
+# Slides:  marp writing/P07_deck.md --html --pdf --allow-local-files --no-stdin -o writing/P07_deck.pdf
+#          (--allow-local-files embeds the figures; --no-stdin stops Marp waiting on a pipe)
+# Report:  cd writing && pandoc P07_early-warning-report.md -s --css P07_report.css -o P07_early-warning-report.html
+#          then print P07_early-warning-report.html to PDF (e.g. headless Chrome, A4)
 ```
 
 ---
@@ -135,4 +137,4 @@ This is a **leading indicator and an operating model**, not an accident predicto
 
 ## Authorship & provenance
 
-This analysis was produced with **AI-agent assistance under human direction**. Every material contribution is logged in [`provenance-ledger.md`](provenance-ledger.md) with author, timestamp, and change. The transparency is intentional — including the self-corrections (e.g. the structured z-detector staying silent on the gradual rise) and the narrative-model pilot→scale pivot (local GLiNER2 → hosted DeepSeek), both documented in the record.
+This analysis was produced with **AI-agent assistance under human direction**. Every material contribution is logged in [`provenance-ledger.md`](provenance-ledger.md) with author, timestamp, and change. The transparency is intentional — including the self-corrections (e.g. the structured z-detector spiking repeatedly but never holding the 3-month persistence rule, so the narrative label carried the fire) and the narrative-model pilot→scale pivot (local GLiNER2 → hosted DeepSeek), both documented in the record.

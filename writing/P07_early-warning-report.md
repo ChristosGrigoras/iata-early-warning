@@ -134,7 +134,7 @@ The **numerator roughly tripled** while the **denominator stayed in a flat ~4,50
 The single biggest challenge — *more flying ⇒ more conflicts, mechanically* — is ruled out on two counts:
 
 - **The rate rose.** FY2023 had **fewer operations than FY2019 (37.3M vs ~43M) yet more incursions** (~1,777, ~5/day) → incursions-per-operation ran **~15% above** the pre-pandemic baseline.
-- **Severity, not just frequency, spiked.** Category A&B ("serious", collision narrowly avoided) incursions hit **22 in FY2023 — a six-year high — then fell to 9 in FY2024 (−59%)**. More traffic raises frequency, not severity; this mirrors the share peaking ~2024 and easing in 2025.
+- **Severity, not just frequency, spiked.** Category A&B ("serious", collision narrowly avoided) incursions hit **22 in FY2023 — a six-year high — then fell to 9 in FY2024 (−59%)**. (Honeywell's separately-published "serious runway incursions" tally rose 16→23 over 2022→2023 — a slightly different basis than the FAA Cat A&B count used here, but the same direction.) More traffic raises frequency, not severity; this mirrors the share peaking ~2024 and easing in 2025.
 
 ### 5.3 Other guards
 
@@ -208,8 +208,8 @@ This worked example is a **proof of concept**. The same pipeline already emits a
 | Method spec (single source of truth) | `production/spec/P03_methodology.md` |
 | External corroboration & bias rule-outs | `research/notes/P05_signal-corroboration.md` |
 | Narrative validation | `research/notes/P04_narrative-validation.md` |
-| Distributional / normality diagnostic | `production/build/P02_make_normality_diagnostic.py` → `output/eda/P02_normality_diagnostic.png` |
-| Figures & chart builders | `production/output/`, `production/build/make_*.py` |
+| Distributional / normality diagnostic | `production/build/P02_make_normality_diagnostic.py` → `production/output/eda/P02_normality_diagnostic.png` |
+| Figures & chart builders | `production/output/`, `production/build/P07_make_*.py` (+ `P04_make_narrative_label_chart.py`) |
 | Presentation | `writing/P07_deck.pdf` |
 
 - **Data** is not committed (NASA ASRS public extracts); see the README for the documented download steps.
@@ -224,8 +224,8 @@ This worked example is a **proof of concept**. The same pipeline already emits a
 - DOT OIG, "FAA Has Taken Steps To Prevent and Mitigate Runway Incursions" (final report, Mar 2025) — oig.dot.gov
 - FAA, "Readout from the FAA Aviation Safety Summit" (Mar 2023); FAA *Air Traffic by the Numbers* (2024); FAA Runway Safety Statistics
 - NYT, "Airline Close Calls Happen Far More Often Than Previously Known" (Aug 21, 2023)
-- Honeywell Aerospace (serious incursions 16→23, 2022→2023)
+- Honeywell Aerospace (serious runway incursions 16→23, 2022→2023 — broader basis than the FAA Cat A&B count of 22 cited in §5.2; consistent in direction)
 
 ---
 
-<sub>Authorship & provenance: this analysis was produced with AI-agent assistance under human direction; every material contribution is logged in `provenance-ledger.md` with author, timestamp, and change. The transparency is deliberate — the method, the self-corrections (e.g. the structured z-detector staying silent), and the model pivot are all part of the record.</sub>
+<sub>Authorship & provenance: this analysis was produced with AI-agent assistance under human direction; every material contribution is logged in `provenance-ledger.md` with author, timestamp, and change. The transparency is deliberate — the method, the self-corrections (e.g. the structured z-detector spiking repeatedly but never holding the persistence rule, so the narrative label carried the fire), and the model pivot are all part of the record.</sub>

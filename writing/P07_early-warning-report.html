@@ -237,7 +237,7 @@
 <p>The single biggest challenge — <em>more flying ⇒ more conflicts, mechanically</em> — is ruled out on two counts:</p>
 <ul>
 <li><strong>The rate rose.</strong> FY2023 had <strong>fewer operations than FY2019 (37.3M vs ~43M) yet more incursions</strong> (~1,777, ~5/day) → incursions-per-operation ran <strong>~15% above</strong> the pre-pandemic baseline.</li>
-<li><strong>Severity, not just frequency, spiked.</strong> Category A&amp;B (“serious”, collision narrowly avoided) incursions hit <strong>22 in FY2023 — a six-year high — then fell to 9 in FY2024 (−59%)</strong>. More traffic raises frequency, not severity; this mirrors the share peaking ~2024 and easing in 2025.</li>
+<li><strong>Severity, not just frequency, spiked.</strong> Category A&amp;B (“serious”, collision narrowly avoided) incursions hit <strong>22 in FY2023 — a six-year high — then fell to 9 in FY2024 (−59%)</strong>. (Honeywell’s separately-published “serious runway incursions” tally rose 16→23 over 2022→2023 — a slightly different basis than the FAA Cat A&amp;B count used here, but the same direction.) More traffic raises frequency, not severity; this mirrors the share peaking ~2024 and easing in 2025.</li>
 </ul>
 <h3 id="other-guards">5.3 Other guards</h3>
 <ul>
@@ -338,11 +338,11 @@
 </tr>
 <tr class="odd">
 <td>Distributional / normality diagnostic</td>
-<td><code>production/build/P02_make_normality_diagnostic.py</code> → <code>output/eda/P02_normality_diagnostic.png</code></td>
+<td><code>production/build/P02_make_normality_diagnostic.py</code> → <code>production/output/eda/P02_normality_diagnostic.png</code></td>
 </tr>
 <tr class="even">
 <td>Figures &amp; chart builders</td>
-<td><code>production/output/</code>, <code>production/build/make_*.py</code></td>
+<td><code>production/output/</code>, <code>production/build/P07_make_*.py</code> (+ <code>P04_make_narrative_label_chart.py</code>)</td>
 </tr>
 <tr class="odd">
 <td>Presentation</td>
@@ -362,9 +362,9 @@
 <li>DOT OIG, “FAA Has Taken Steps To Prevent and Mitigate Runway Incursions” (final report, Mar 2025) — oig.dot.gov</li>
 <li>FAA, “Readout from the FAA Aviation Safety Summit” (Mar 2023); FAA <em>Air Traffic by the Numbers</em> (2024); FAA Runway Safety Statistics</li>
 <li>NYT, “Airline Close Calls Happen Far More Often Than Previously Known” (Aug 21, 2023)</li>
-<li>Honeywell Aerospace (serious incursions 16→23, 2022→2023)</li>
+<li>Honeywell Aerospace (serious runway incursions 16→23, 2022→2023 — broader basis than the FAA Cat A&amp;B count of 22 cited in §5.2; consistent in direction)</li>
 </ul>
 <hr />
-<p><sub>Authorship &amp; provenance: this analysis was produced with AI-agent assistance under human direction; every material contribution is logged in <code>provenance-ledger.md</code> with author, timestamp, and change. The transparency is deliberate — the method, the self-corrections (e.g. the structured z-detector staying silent), and the model pivot are all part of the record.</sub></p>
+<p><sub>Authorship &amp; provenance: this analysis was produced with AI-agent assistance under human direction; every material contribution is logged in <code>provenance-ledger.md</code> with author, timestamp, and change. The transparency is deliberate — the method, the self-corrections (e.g. the structured z-detector spiking repeatedly but never holding the persistence rule, so the narrative label carried the fire), and the model pivot are all part of the record.</sub></p>
 </body>
 </html>

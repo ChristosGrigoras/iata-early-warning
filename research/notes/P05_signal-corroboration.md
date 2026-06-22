@@ -55,6 +55,8 @@ FY2023 had **fewer operations than FY2019 (37.3 M vs ~43 M) yet *more* incursion
 
 **2. Severity — not just frequency — spiked, and traffic cannot explain that.** Category A&B ("serious", collision narrowly avoided) incursions hit **22 in FY2023 — the highest in FY2019–2024** — then fell to **9 in FY2024** (−59%). The *dangerous tail* worsened while operations were still below peak, then eased. This mirrors our share peaking ~2024 and dipping in 2025. [OP48 | 2026-06-19T03:30+03:00 | P0011]
 
+> **Reconciling the two "serious incursion" counts.** Two figures appear in these sources: the **FAA Category A&B** count = **22** in FY2023 (used in the deck/report body), and **Honeywell's** "serious runway incursions" = **23** in CY2023 (16 in 2022). They differ by definition (FAA severity category vs Honeywell's published basis) and calendar (fiscal vs calendar year), which is why they land one apart; both show the same 2022→2023 jump. The body uses the FAA Cat A&B number; Honeywell is cited only as independent corroboration of direction. [OP48 | 2026-06-22T18:30+03:00 | P0041]
+
 **3. Anchor incidents (deck colour).** JFK (Jan 13 2023, AA777 crossed an active runway into a departing Delta 737, ~1,400 ft, Cat B) and Austin (Feb 4 2023, SWA737/FedEx767 within ~150–170 ft in freezing fog, Cat A) are the events that triggered the March 2023 summit.
 
 **4. Framing bonus.** The FAA's own February 2023 response *"directed a review of the ASIAS database for indicators of emerging trends."* The FAA reached for data-mining of safety reports **reactively, after the crisis**; our method demonstrates the same idea applied **proactively** would have flagged it ~12–18 months earlier. [OP48 | 2026-06-19T03:30+03:00 | P0011]
