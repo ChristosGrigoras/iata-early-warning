@@ -1,0 +1,41 @@
+# provenance: primary=OP48 authors=[OP48]
+
+# Raw / large data — keep out of git; document download steps in research/notes/
+data/
+*.csv
+*.parquet
+*.zip
+!production/**/*.csv
+# ...but DO commit small derived result tables (so the analysis is inspectable
+# without the raw data or re-running the paid LLM step):
+!production/output/**/*.parquet
+
+# Secrets
+.env
+*.key
+secrets.*
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.ruff_cache/
+.pytest_cache/
+
+# Node / Marp (deck tooling — keep rendered deck.pdf/html + assets, drop tooling & previews)
+node_modules/
+package-lock.json
+writing/preview/
+
+# Internal working notes & private prep — not part of the public deliverable
+OBSERVATIONS.md
+MEMORY.md
+job.md
+interview/
+.cursor/
+skills-lock.json
+
+# OS / editor
+.DS_Store

@@ -1,0 +1,26 @@
+column,missing_rate
+Latitude / Longitude (UAS),1.0
+Aircraft 2 | Aircraft Zone,1.0
+Aircraft 2 | Maintenance Status.Records Complete,1.0
+Aircraft 2 | Maintenance Status.Required / Correct Doc On Board,1.0
+Aircraft 2 | Cabin Lighting,1.0
+Aircraft 2 | Number Of Seats.Number,1.0
+Aircraft 2 | Passengers On Board.Number,1.0
+Aircraft 2 | Crew Size Flight Attendant.Number Of Crew,1.0
+Aircraft 2 | Airworthiness Certification (UAS),1.0
+Unnamed: 125_level_1,1.0
+Aircraft 2 | Maintenance Status.Released For Service,0.9999874335549217
+Aircraft 2 | Passenger Capable (UAS),0.9999874335549217
+Aircraft 2 | Maintenance Status.Maintenance Deferred,0.9999748671098433
+Aircraft 2 | Airspace Authorization Provider (UAS),0.9999748671098433
+Aircraft 2 | Flight Operated with Visual Observer (UAS),0.999962300664765
+Aircraft 2 | Waivers / Exemptions / Authorizations (UAS),0.9999497342196866
+Aircraft 2 | Control Mode (UAS),0.9999497342196866
+Aircraft 1 | Aircraft Zone,0.9999371677746083
+Aircraft 2 | Flight Operated As (UAS),0.9999371677746083
+Aircraft 2 | Type (UAS),0.9999371677746083
+Aircraft 2 | Operating Under Waivers / Exemptions / Authorizations (UAS),0.9999246013295299
+Person 2 | UAS Communication Breakdown,0.9999246013295299
+Aircraft 2 | Maintenance Status.Maintenance Type,0.9998994684393732
+Aircraft 2 | Maintenance Status.Maintenance Items Involved,0.9998994684393732
+Aircraft 1 | Passenger Capable (UAS),0.9997989368787463

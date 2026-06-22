@@ -1,0 +1,2 @@
+rows_raw,rows_qa_window,unique_acn_qa_window,date_min,date_max,top_anomaly_1,top_anomaly_1_count
+80047,79577,79577,201101,202512,Aircraft Equipment Problem Critical,6577

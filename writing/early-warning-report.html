@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Early warning from near-misses</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="report.css" />
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Early warning from near-misses</h1>
+<p class="subtitle">Surfacing emerging aviation-safety risk early — from public data</p>
+</header>
+<p><strong>IATA Senior Data Scientist — technical case study.</strong> Data: NASA Aviation Safety Reporting System (ASRS), 80,047 reports, 2011–2025, US.</p>
+<hr />
+<h2 id="executive-summary">Executive summary</h2>
+<p>Accidents are rare and <em>lagging</em>; the near-misses that precede them are common and arrive <em>first</em>. This study asks whether publicly available data can surface those precursors <strong>before</strong> a risk is widely recognised — and demonstrates that it can, on a worked example.</p>
+<p>Using 15 years of ASRS incident reports, two independent detectors were built on a single principle — track each risk category’s <strong>share</strong> of monthly reports (not raw counts) and flag a sustained, statistically anomalous rise. One detector reads the <strong>structured taxonomy codes</strong>; the other is a <strong>zero-shot language model</strong> reading the free-text narratives. Both moved early — one as a rising trend, one as a statistical fire:</p>
+<blockquote>
+<p><strong>Surface / runway “ground-conflict” near-misses began rising in 2021–2022 — roughly 12–18 months before the public inflection</strong> (the FAA’s March 2023 emergency Safety Summit and the August 2023 <em>New York Times</em> close-calls exposé). The structured ground-conflict tag roughly doubled (≈5% → 11% of reports, raw count tripled); the narrative model independently fired on runway incursions in <strong>June 2021</strong>.</p>
+</blockquote>
+<p>The rise survives the obvious challenges: it is in the numerator not the denominator, it persists after normalising for the post-COVID traffic rebound (the incursion <em>rate</em> ran ~15% above pre-pandemic and <em>severity</em> spiked), and it pre-dates the summit (ruling out awareness-driven over-reporting). External FAA/DOT-OIG figures confirm both the rise and its 2024 easing.</p>
+<p>The deliverable is not an accident predictor. It is a <strong>leading indicator</strong> and an <strong>operating model</strong>: the same pipeline produces a ranked monthly watchlist of <em>what is emerging and where to look first</em> — a triage queue for human analysts, months earlier than the lagging record would allow.</p>
+<hr />
+<h2 id="problem-framing">1. Problem framing</h2>
+<p><strong>How should an “early-warning system” for aviation safety be interpreted?</strong> Not as accident prediction. Accidents are (thankfully) rare, and a model trained on them learns from the lagging record. The tractable, useful problem is <strong>detecting precursors trending upward before the adverse outcome is widely recognised — from data already held.</strong></p>
+<p>This reframing drives every subsequent choice:</p>
+<ul>
+<li><strong>What to monitor:</strong> <em>precursors</em> — voluntary near-miss reports — rather than accidents. ASRS is a national, public repository of exactly these, filed by pilots, controllers, and maintenance personnel, and rich in free-text narrative.</li>
+<li><strong>What counts as a signal:</strong> a <strong>sustained rise in the share</strong> of reports about a given risk — a change in the <em>mix</em> of what is being reported, not merely in how much is reported.</li>
+<li><strong>What the output is:</strong> a <strong>ranked shortlist for human review</strong>, explicitly framed as <em>leading indicators, not alarms</em> — a reason for an analyst to look, never an automated verdict.</li>
+</ul>
+<p>This matches how the role’s domain actually operates: the value is in <em>framing, reasoning, and communication</em> of a credible early signal, not in a black-box predictor.</p>
+<hr />
+<h2 id="data">2. Data</h2>
+<p><strong>Source.</strong> NASA ASRS, 2011–2025: <strong>80,047</strong> reports after de-duplication by accession number (<code>ACN</code>), <strong>127</strong> columns, of which <strong>79,572</strong> carry a usable free-text narrative. Combined from 15 annual public extracts.</p>
+<p><strong>Grain and limitations (stated up front, because they bound every claim):</strong></p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Property</th>
+<th>Reality</th>
+<th>Consequence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Time</td>
+<td><code>Date</code> is <strong>YYYYMM only</strong> (month grain, 100% filled)</td>
+<td>Monthly series are the finest temporal resolution; no exact-date or intraday analysis</td>
+</tr>
+<tr class="even">
+<td>Location</td>
+<td><strong>No airport / origin–destination</strong> (de-identified by design); only facility <em>type</em> and US state</td>
+<td>No airport-level hotspotting; geography limited to coarse slices</td>
+</tr>
+<tr class="odd">
+<td>Reporting</td>
+<td><strong>Voluntary</strong>; total monthly volume swings (2019 peak, 2020 COVID trough)</td>
+<td>Raw counts conflate “how much is reported” with “what happened” → drives the share-based metric (§3)</td>
+</tr>
+<tr class="even">
+<td>Latency</td>
+<td>~60-day processing lag</td>
+<td>The most recent 2–3 months are under-reported and excluded from “fired” claims (shown but greyed)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Well-populated signal carriers</strong> include <code>Anomaly</code> (99.9%, multi-label taxonomy of what went wrong), <code>Contributing Factors / Situations</code>, <code>Person 1 | Human Factors</code>, <code>Aircraft 1 | Flight Phase</code> (96.7%), and the <code>Report 1 | Narrative</code> free text (100%). Multi-label fields are <code>"; "</code>-joined and exploded so a report contributes to every category it lists.</p>
+<p>A QA-first exploratory pass (<code>production/build/01-eda.ipynb</code>) established schema integrity, temporal coverage, missingness, and reporting-bias diagnostics before any modelling.</p>
+<hr />
+<h2 id="method-the-operating-model">3. Method — the operating model</h2>
+<p>The architecture is deliberately simple and transparent: <strong>one detection engine, fed by two independent labellers.</strong></p>
+<h3 id="one-detection-engine-shared">3.1 One detection engine (shared)</h3>
+<p>Every label — whether a structured tag or a narrative-derived label — is turned into a monthly series and run through identical logic:</p>
+<ol type="1">
+<li><strong>Metric — share, not counts.</strong> <code>s_c(t) = count_c(t) / total_reports(t)</code>. A signal is a shift in <em>share</em>, which controls for overall reporting propensity (the central ASRS caveat).</li>
+<li><strong>Robust anomaly score.</strong> Against a trailing <strong>24-month</strong> baseline, <code>z = (s_c(t) − median₂₄) / (1.4826 · MAD₂₄)</code>. Median/MAD (not mean/SD) so the baseline is not inflated by the very spikes being hunted.</li>
+<li><strong>Thresholds + persistence.</strong> <code>|z| ≥ 2</code> = <em>watch</em>, <code>≥ 3</code> = <em>strong</em>; a fire requires the threshold to hold for <strong>≥ 3 consecutive months</strong> (kills one-off blips). Early-warning focuses on rising shares.</li>
+<li><strong>Bias guards (mandatory before a fire counts).</strong>
+<ul>
+<li><strong>Taxonomy-change guard</strong> — categories whose first non-zero month is after 2011 may reflect a code being introduced/renamed; they are gated from signal claims.</li>
+<li><strong>Seasonality guard</strong> — a fire requires a positive year-over-year share change, so a recurring seasonal bump alone will not trigger.</li>
+<li><strong>Multiple-testing stance</strong> — with ~40 categories × ~180 months, outputs are framed as <em>ranked candidates</em> (rank = <code>peak_z × months_sustained</code>), not alarms.</li>
+</ul></li>
+</ol>
+<h3 id="two-labellers-differ-only-in-how-a-report-is-labelled">3.2 Two labellers (differ only in how a report is labelled)</h3>
+<ul>
+<li><strong>Structured view</strong> — labels come from the ASRS taxonomy codes (<code>Anomaly</code>, <code>Flight Phase</code>, …). Precise, but only sees risks that already carry a code.</li>
+<li><strong>Narrative view</strong> — a <strong>zero-shot LLM</strong> reads the free text and assigns ~10 plain-English risk labels (e.g. <em>runway incursion / ground conflict</em>, <em>GPS interference / jamming</em>, <em>unstabilized approach</em>, <em>fatigue</em>). It catches the <strong>emerging and unlabelled</strong> — risks with no taxonomy code at all. A second, <strong>unsupervised</strong> topic-discovery pass (embeddings → clustering) guards against the “only finds what you name” confirmation-bias risk.</li>
+</ul>
+<p>The strongest signal is one where <strong>both views agree</strong> — a narrative theme rising in step with a structured category — because they are entirely separate pipelines with different blind spots.</p>
+<blockquote>
+<p><strong>Implementation note (honest record).</strong> The narrative labeller was <em>prototyped</em> on a local GLiNER2 model (free, CPU). At full coverage that path measured ~66 h on CPU for 80k narratives, so the production run used a hosted zero-shot model — <strong>OpenRouter <code>deepseek/deepseek-v4-flash</code></strong>, concurrent batched calls, across all <strong>79,572</strong> narratives. Only the labelling engine changed; the §3.1 detector logic is identical. (Output files retain a <code>gliner_label_*</code> name for historical continuity.) Full reasoning in <code>production/spec/methodology.md</code> §6.1 and <code>research/notes/signalB-scale-cost.md</code>.</p>
+</blockquote>
+<hr />
+<h2 id="finding-surface-runway-near-misses-rose-early">4. Finding — surface &amp; runway near-misses rose early</h2>
+<p>The structured detector surfaced <strong>42 candidate series (26 with a persisted fire, 0 gated as taxonomy artifacts)</strong>. The locked headline — chosen because it is falsifiable and externally checkable — is <strong>surface / ground-conflict near-misses</strong>, where a rising <em>structured trend</em> and a <em>persisted narrative fire</em> coincide.</p>
+<figure>
+<img src="assets/hero_surface_conflict.png" alt="" /><figcaption>Figure 1 — Structured ground-conflict and taxi-phase shares with the independent narrative runway-incursion line (♦ marks the narrative fire, June 2021); the amber band is the pre-crisis lead-time window.</figcaption>
+</figure>
+<p><strong>The structured <code>Conflict Ground Conflict</code> share roughly doubled:</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th>Year</th>
+<th>2011</th>
+<th>2013</th>
+<th>2021</th>
+<th>2023</th>
+<th>2024</th>
+<th>2025</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Ground-conflict share</td>
+<td>4.1%</td>
+<td>3.0%</td>
+<td>6.7%</td>
+<td>9.0%</td>
+<td><strong>11.2%</strong></td>
+<td>10.5%</td>
+</tr>
+</tbody>
+</table>
+<p>corroborated by the concurrent <code>Taxi</code>-phase rise (~8–11% → 15.2% in 2024). <strong>Independently, the narrative model fired on the <code>runway incursion / ground conflict / surface movement</code> label in June 2021</strong> (persisted watch fire). Two methods, different pipelines, same trend and timing.</p>
+<p><strong>The most instructive detail:</strong> the structured share <strong>spiked above the alarm threshold repeatedly</strong> — its robust <em>z</em> reached ≈6, including in April 2021 — but <strong>never for three consecutive months</strong> (its longest watch run was 2), so the persistence rule never let it register a <em>fire</em>. The noisier structured series kept tripping and resetting; the <strong>narrative</strong> label rose smoothly enough to hold the 3-month rule and produced the <strong>only sustained fire — June 2021</strong>. Two detectors, two different failure modes — the argument for running both, not a weakness to hide.</p>
+<h3 id="it-led-the-publicly-recognised-crisis-by-1218-months">4.1 It led the publicly-recognised crisis by ~12–18 months</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>When</th>
+<th>What</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Jun 2021</strong></td>
+<td>Narrative detector fires on runway incursions</td>
+<td>this analysis</td>
+</tr>
+<tr class="even">
+<td>2021–2022</td>
+<td>Structured ground-conflict share inflects upward</td>
+<td>this analysis</td>
+</tr>
+<tr class="odd">
+<td>Jan / Feb 2023</td>
+<td>JFK (AA777 runway crossing) and Austin (SWA/FedEx ~150 ft) near-collisions</td>
+<td>NTSB / press</td>
+</tr>
+<tr class="even">
+<td><strong>Mar 2023</strong></td>
+<td>FAA convenes emergency Aviation Safety Summit</td>
+<td>FAA newsroom</td>
+</tr>
+<tr class="odd">
+<td>Aug 2023</td>
+<td>NYT: “Airline Close Calls Happen Far More Often Than Previously Known”</td>
+<td>NYT</td>
+</tr>
+</tbody>
+</table>
+<p>The ASRS-derived signal <strong>led the widely-recognised crisis by roughly 12–18 months.</strong> Notably, the FAA’s own response was to <em>mine its ASIAS safety database for emerging trends</em> — <strong>reactively, after</strong> the events. The same idea, applied <strong>proactively</strong>, is exactly what this method demonstrates.</p>
+<hr />
+<h2 id="robustness-ruling-out-the-artifacts-a-reviewer-will-probe">5. Robustness — ruling out the artifacts a reviewer will probe</h2>
+<h3 id="is-the-rising-share-just-a-denominator-compositional-artifact">5.1 Is the rising <em>share</em> just a denominator / compositional artifact?</h3>
+<p>No. Checked directly against the count series:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Year</th>
+<th>Ground-conflict count (numerator)</th>
+<th>Total reports (denominator)</th>
+<th>Share</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2011</td>
+<td>230</td>
+<td>5,646</td>
+<td>4.1%</td>
+</tr>
+<tr class="even">
+<td>2021</td>
+<td>305</td>
+<td>4,571</td>
+<td>6.7%</td>
+</tr>
+<tr class="odd">
+<td>2023</td>
+<td>411</td>
+<td>4,589</td>
+<td>9.0%</td>
+</tr>
+<tr class="even">
+<td>2024</td>
+<td>606</td>
+<td>5,427</td>
+<td>11.2%</td>
+</tr>
+<tr class="odd">
+<td>2025</td>
+<td>642</td>
+<td>6,109</td>
+<td>10.5%</td>
+</tr>
+</tbody>
+</table>
+<figure>
+<img src="assets/rawcount_ground_conflict.png" alt="" /><figcaption>Figure 2 — Ground-conflict raw count (numerator) vs total monthly reports (denominator): the numerator roughly tripled while the base stayed flat.</figcaption>
+</figure>
+<p>The <strong>numerator roughly tripled</strong> while the <strong>denominator stayed in a flat ~4,500–6,100/yr band</strong>. Because <code>Anomaly</code> is <strong>multi-label</strong>, category shares do not sum to 100% — one category rising does not mechanically force another down, so the naive pie-slice artifact does not apply. External absolute counts rose independently.</p>
+<h3 id="isnt-it-just-the-post-covid-traffic-rebound">5.2 Isn’t it just the post-COVID traffic rebound?</h3>
+<p>The single biggest challenge — <em>more flying ⇒ more conflicts, mechanically</em> — is ruled out on two counts:</p>
+<ul>
+<li><strong>The rate rose.</strong> FY2023 had <strong>fewer operations than FY2019 (37.3M vs ~43M) yet more incursions</strong> (~1,777, ~5/day) → incursions-per-operation ran <strong>~15% above</strong> the pre-pandemic baseline.</li>
+<li><strong>Severity, not just frequency, spiked.</strong> Category A&amp;B (“serious”, collision narrowly avoided) incursions hit <strong>22 in FY2023 — a six-year high — then fell to 9 in FY2024 (−59%)</strong>. More traffic raises frequency, not severity; this mirrors the share peaking ~2024 and easing in 2025.</li>
+</ul>
+<h3 id="other-guards">5.3 Other guards</h3>
+<ul>
+<li><strong>Reverse causality</strong> (post-summit awareness → more reporting): the signal <strong>pre-dates</strong> the March 2023 summit, so awareness-driven over-reporting cannot explain the leading edge — it strengthens the claim.</li>
+<li><strong>Taxonomy artifact:</strong> <code>Conflict Ground Conflict</code> exists from 2011 (<code>taxonomy_suspect = False</code>).</li>
+<li><strong>Seasonality:</strong> fires require positive YoY change.</li>
+<li><strong>Units caveat:</strong> external counts are fiscal-year, raw; the figures here are calendar-month share — directionally consistent, <em>not</em> like-for-like (stated explicitly).</li>
+</ul>
+<figure>
+<img src="assets/crossview_overlay.png" alt="" /><figcaption>Figure 3 — Two independent detectors on one axis: the structured taxonomy tag and the narrative LLM both rise into 2021–24 (agreement in direction and timing, not level).</figcaption>
+</figure>
+<hr />
+<h2 id="validation-was-the-language-model-checked">6. Validation — was the language model checked?</h2>
+<p>The narrative LLM is the novel half of the method and carries the formal June-2021 fire, so its output was spot-checked. <strong>30 narratives the model flagged</strong> with the runway label were independently adjudicated (positives only → precision, not recall; confidence-stratified, seeded for reproducibility — <code>production/build/validate_narrative_labels.py</code>):</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Precision — broad (genuinely surface/ground-related)</td>
+<td><strong>70%</strong> (21/30)</td>
+</tr>
+<tr class="even">
+<td>Precision — strict (true incursion/conflict near-miss)</td>
+<td><strong>37%</strong> (11/30)</td>
+</tr>
+<tr class="odd">
+<td>Precision by confidence ≥0.95 / 0.90 / ≤0.85</td>
+<td><strong>88% (7/8) / 70% (7/10) / 58% (7/12)</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The confidence bands are small (n = 8 / 10 / 12), so read the gradient as directional rather than precise — the takeaway is simply that model confidence is informative.</p>
+<p><strong>Dominant failure mode:</strong> 8 of 9 false positives are <em>airborne</em> near-mid-air collisions the model tags as “conflict” — the word “conflict” in the label bleeds airborne events into a surface label. A confidence threshold (~0.95) or an airborne-vs-surface guard would sharpen it materially.</p>
+<p><strong>Why the headline still holds:</strong> the label is broad (it flags ~15.7% of narratives; base rate ~13% even in 2011), so its <em>absolute level</em> is overstated. The early-warning claim therefore rests on the <strong>trend</strong> (the rise and the June-2021 fire) and on <strong>agreement with the cleaner structured tag</strong> — which does not share this failure mode — <em>not</em> on the narrative level. A 70%-broad / 37%-strict precision is acceptable for a triage shortlist; it would not be acceptable for an automated count, which is precisely why the output is framed as a candidate for review.</p>
+<hr />
+<h2 id="from-one-signal-to-a-monthly-watchlist-decision-support">7. From one signal to a monthly watchlist (decision-support)</h2>
+<p>This worked example is a <strong>proof of concept</strong>. The same pipeline already emits a <strong>ranked monthly watchlist</strong> from both detectors — a short, explainable list of what is emerging and where to look first.</p>
+<figure>
+<img src="assets/watchlist_table.png" alt="" /><figcaption>Figure 4 — Example ranked monthly watchlist produced from both detectors: a short, explainable, prioritised queue for human triage.</figcaption>
+</figure>
+<p><strong>Value to a safety team:</strong> instead of waiting for the lagging accident/incident record, an analyst gets a prioritised, <em>explainable</em> queue of rising precursors — each traceable to the reports behind it — months earlier. It supports decisions about <strong>where to focus limited inspection, audit, and outreach attention</strong>.</p>
+<p><strong>How it would slot into practice:</strong> - <strong>Monthly run</strong> on the latest ASRS extract; the freshest 2 months flagged soft (reporting lag). - <strong>Human-in-the-loop triage</strong> — candidates, not alarms; an analyst confirms or dismisses, building a feedback record. - <strong>Cross-source corroboration</strong> for anything that fires, exactly as done here.</p>
+<hr />
+<h2 id="limitations-what-this-is-and-what-it-isnt">8. Limitations — what this is, and what it isn’t</h2>
+<p><strong>What it is:</strong> a leading indicator that risk is <em>rising</em>; low-cost, public, explainable, reproducible; corroborated three ways (narrative fire + structured trend + external sources).</p>
+<p><strong>What it isn’t:</strong> - <strong>Not accident prediction</strong> — these are precursors, not accidents. - <strong>Not causal.</strong> The leading hypothesis is post-COVID understaffing plus the traffic rebound — but only the <em>symptom</em> is observed, not the cause. - <strong>Not bias-free.</strong> Voluntary-reporting bias is <em>mitigated</em> (share, not counts) — not eliminated. - <strong>Coarse.</strong> Monthly, US-only, de-identified (no airport). These figures and the FAA’s agree in <em>direction, not magnitude</em>.</p>
+<hr />
+<h2 id="reproducibility">9. Reproducibility</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Component</th>
+<th>Location</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>EDA / QA</td>
+<td><code>production/build/01-eda.ipynb</code></td>
+</tr>
+<tr class="even">
+<td>Signal A (structured)</td>
+<td><code>production/build/02-structured-signals.ipynb</code></td>
+</tr>
+<tr class="odd">
+<td>Signal B (narrative LLM + discovery)</td>
+<td><code>production/build/03-narrative-signals.ipynb</code></td>
+</tr>
+<tr class="even">
+<td>Method spec (single source of truth)</td>
+<td><code>production/spec/methodology.md</code></td>
+</tr>
+<tr class="odd">
+<td>External corroboration &amp; bias rule-outs</td>
+<td><code>research/notes/phase5-corroboration.md</code></td>
+</tr>
+<tr class="even">
+<td>Narrative validation</td>
+<td><code>research/notes/narrative-validation.md</code></td>
+</tr>
+<tr class="odd">
+<td>Figures &amp; chart builders</td>
+<td><code>production/output/</code>, <code>production/build/make_*.py</code></td>
+</tr>
+<tr class="even">
+<td>Presentation</td>
+<td><code>writing/deck.pdf</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Data</strong> is not committed (NASA ASRS public extracts); see the README for the documented download steps.</li>
+<li><strong>Environment:</strong> Python 3.12, <code>requirements.txt</code> (Polars, pandas, scikit-learn, matplotlib, httpx).</li>
+<li><strong>Narrative model:</strong> OpenRouter <code>deepseek/deepseek-v4-flash</code> (needs <code>OPENROUTER_API_KEY</code>); the derived label parquets are committed so Signal B is inspectable without re-running the paid step.</li>
+</ul>
+<hr />
+<h2 id="sources">Sources</h2>
+<ul>
+<li>NASA ASRS Database Online — asrs.arc.nasa.gov</li>
+<li>DOT OIG, “FAA Has Taken Steps To Prevent and Mitigate Runway Incursions” (final report, Mar 2025) — oig.dot.gov</li>
+<li>FAA, “Readout from the FAA Aviation Safety Summit” (Mar 2023); FAA <em>Air Traffic by the Numbers</em> (2024); FAA Runway Safety Statistics</li>
+<li>NYT, “Airline Close Calls Happen Far More Often Than Previously Known” (Aug 21, 2023)</li>
+<li>Honeywell Aerospace (serious incursions 16→23, 2022→2023)</li>
+</ul>
+<hr />
+<p><sub>Authorship &amp; provenance: this analysis was produced with AI-agent assistance under human direction; every material contribution is logged in <code>provenance-ledger.md</code> with author, timestamp, and change. The transparency is deliberate — the method, the self-corrections (e.g. the structured z-detector staying silent), and the model pivot are all part of the record.</sub></p>
+</body>
+</html>
