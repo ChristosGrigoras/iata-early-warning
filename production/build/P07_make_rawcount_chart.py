@@ -12,6 +12,7 @@ from pathlib import Path
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import polars as pl
+from matplotlib.patches import Patch
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 SERIES = ROOT / "production/output/signals/category_share_series.parquet"
@@ -26,7 +27,8 @@ STEEL = "#5B9BD5"
 SLATE = "#2E3440"      # text
 GRID = "#E5E7EB"
 GRAY = "#6B7280"       # denominator — total reports
-AMBER = "#D97706"
+AMBER = "#D97706"      # semantic: crisis markers
+AMBER_FILL = "#FCEBCF" # lead-time band fill (matches P07_make_hero_chart.py)
 
 plt.rcParams.update({
     "font.family": "DejaVu Sans",
@@ -53,6 +55,23 @@ def main() -> None:
 
     fig, ax = plt.subplots(figsize=(12, 6.4), dpi=200)
     ax2 = ax.twinx()
+
+    # Lead-time band + crisis markers (same dates as the hero chart) so the
+    # "when" is explicit here too: the numerator climbs through the pre-crisis
+    # window, BEFORE the public inflection.
+    band_start = mdates.datestr2num("2021-01-01")
+    summit = mdates.datestr2num("2023-03-15")
+    nyt = mdates.datestr2num("2023-08-21")
+    ax2.axvspan(band_start, summit, color=AMBER_FILL, zorder=0)
+    for xpos in (summit, nyt):
+        ax.axvline(xpos, color=AMBER, ls="--", lw=1.4, zorder=5)
+    ax.annotate("Ground-conflict count\nclimbs here · pre-crisis",
+                xy=(mdates.datestr2num("2021-10-01"), 0.95), xycoords=("data", "axes fraction"),
+                color=AMBER, fontsize=9.5, fontweight="bold", ha="center", va="top")
+    ax.annotate("FAA Safety\nSummit · Mar 2023", xy=(summit, 0.40), xycoords=("data", "axes fraction"),
+                xytext=(7, 0), textcoords="offset points", color=AMBER, fontsize=9, fontweight="bold", va="center")
+    ax.annotate("NYT close-calls\nexposé · Aug 2023", xy=(nyt, 0.18), xycoords=("data", "axes fraction"),
+                xytext=(7, 0), textcoords="offset points", color=AMBER, fontsize=9, va="center")
 
     # Denominator (right axis): total monthly reports — flat band, gray.
     ax2.plot(x, gc["total_reports"].to_list(), color=GRAY, alpha=0.16, lw=1.0, zorder=1)
@@ -90,8 +109,9 @@ def main() -> None:
     # combined legend (both axes)
     h1, l1 = ax.get_legend_handles_labels()
     h2, l2 = ax2.get_legend_handles_labels()
-    ax.legend(h1 + h2, l1 + l2, loc="upper left", frameon=False, fontsize=10,
-              bbox_to_anchor=(0.0, 0.98))
+    band_patch = Patch(facecolor=AMBER_FILL, label="Lead-time window (pre-crisis)")
+    ax.legend(h1 + h2 + [band_patch], l1 + l2 + ["Lead-time window (pre-crisis)"],
+              loc="upper left", frameon=False, fontsize=10, bbox_to_anchor=(0.0, 0.98))
 
     fig.tight_layout()
     out = OUT_DIR / "P07_rawcount_ground_conflict.png"
