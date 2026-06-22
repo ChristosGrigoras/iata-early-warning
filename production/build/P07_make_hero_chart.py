@@ -9,7 +9,11 @@ from pathlib import Path
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 import polars as pl
+from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
+
+# Pre-rise baseline window (clean decade, excludes the 2020 COVID distortion).
+BASE_LO, BASE_HI = 201101, 201912
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 SERIES = ROOT / "production/output/signals/category_share_series.parquet"
@@ -53,6 +57,13 @@ def series(df: pl.DataFrame, field: str, category: str) -> pl.DataFrame:
     return s
 
 
+def pooled_baseline(s: pl.DataFrame) -> float:
+    """Weighted (pooled) baseline share % over 2011–2019: total category count
+    / total reports — the honest aggregate rate, robust to monthly volume."""
+    d = s.filter((pl.col("ym") >= BASE_LO) & (pl.col("ym") <= BASE_HI))
+    return 100.0 * d["count"].sum() / d["total_reports"].sum()
+
+
 def narrative_series(label: str) -> pl.DataFrame:
     s = (
         pl.read_parquet(NARR)
@@ -80,7 +91,10 @@ def main() -> None:
     nyt = mdates.datestr2num("2023-08-21")
     ax.axvspan(band_start, summit, color=AMBER_FILL, zorder=0)
 
-    # raw (faint) + smoothed (bold) for each series
+    # raw (faint) + smoothed (bold) for each series, plus each line's own
+    # 2011–2019 pooled baseline (dotted, same colour) so the eye sees every
+    # series DEPART from its historical norm — not just sit at a level.
+    label_x = mdates.datestr2num("2011-02-01")
     for s, color, label in [
         (gc, NAVY, "Structured: ground-conflict tag"),
         (taxi, STEEL, "Structured: taxi phase (concurrent)"),
@@ -89,6 +103,11 @@ def main() -> None:
         x = s["date"].to_list()
         ax.plot(x, s["share_pct"].to_list(), color=color, alpha=0.16, lw=1.0, zorder=2)
         ax.plot(x, s["share_smooth"].to_list(), color=color, lw=2.6, label=label, zorder=3)
+        base = pooled_baseline(s)
+        ax.axhline(base, color=color, ls=":", lw=1.2, alpha=0.7, zorder=1.5)
+        ax.text(label_x, base, f"{base:.1f}%", color=color, fontsize=8.5, fontweight="bold",
+                va="center", ha="left",
+                bbox=dict(facecolor="white", edgecolor="none", alpha=0.75, pad=1.0), zorder=7)
 
     # ♦ mark where the narrative (LLM) view independently fires (June 2021)
     fire = mdates.datestr2num("2021-06-01")
@@ -118,7 +137,7 @@ def main() -> None:
 
     ax.set_title("Ground-conflict reports rose above their decade baseline before 2023",
                  fontsize=15, fontweight="bold", color=SLATE, pad=14, loc="left")
-    ax.text(0.0, 1.005, "Share of monthly ASRS reports · 6-mo rolling mean · 2011–2025 · ♦ = narrative (LLM) view fires independently",
+    ax.text(0.0, 1.005, "Share of monthly ASRS reports · 6-mo rolling mean · 2011–2025 · dotted = each line's 2011–19 baseline · ♦ = narrative (LLM) view fires independently",
             transform=ax.transAxes, fontsize=9.5, color="#6B7280", va="bottom")
 
     ax.set_ylabel("Share of monthly reports (%)")
@@ -132,6 +151,7 @@ def main() -> None:
 
     handles, labels = ax.get_legend_handles_labels()
     handles.append(Patch(facecolor=AMBER_FILL, label="Lead-time window (pre-crisis)"))
+    handles.append(Line2D([0], [0], color=SLATE, ls=":", lw=1.2, label="2011–19 baseline (per line)"))
     ax.legend(handles=handles, loc="upper left", frameon=False, fontsize=10,
               bbox_to_anchor=(0.0, 0.86))
 
